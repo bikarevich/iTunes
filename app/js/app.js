@@ -1,16 +1,15 @@
 var angular = require('angular');
 require('angular-ui-router');
 
-
 var app = angular.module('App', [
     'ui.router'
 ]);
 
-require('./service/index');
 require('./controller/index');
+require('./service/index');
 
 app
-    .config(function($stateProvider, $urlRouterProvider) {
+    .config(function ($stateProvider, $urlRouterProvider) {
 
         $urlRouterProvider.otherwise("/index");
 
@@ -25,6 +24,18 @@ app
                 url: "/books",
                 templateUrl: './views/booksPage.html',
                 controller: 'BooksPageController',
+                controllerAs: 'ctrl'
+            })
+            .state('music', {
+                url: "/music",
+                templateUrl: './views/musicPage.html',
+                controller: 'MusicPageController',
+                controllerAs: 'ctrl'
+            })
+            .state('moves', {
+                url: "/moves",
+                templateUrl: './views/movesPage.html',
+                controller: 'MovesPageController',
                 controllerAs: 'ctrl'
             })
     });

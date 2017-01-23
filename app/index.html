@@ -2,17 +2,49 @@
 <html>
 <head>
     <title>iTunes</title>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,700,800&amp;subset=latin-ext"
+          rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 
 <body>
-<div class="content" ng-app="App">
-    <p>
-        <a ui-sref="index">Main Page</a>
-        <a ui-sref="books">Books Page</a>
-    </p>
-    <div ui-view></div>
+<div ng-app="App">
+    <div class="header-wrap">
+        <div class="content">
+            <header class="header">
+                <a ui-sref="index" class="logo"></a>
+                <nav class="nav">
+                    <a ui-sref="index">Home</a>
+                    <a ui-sref="music">Music</a>
+                    <a ui-sref="moves">Moves</a>
+                    <a ui-sref="books">Books</a>
+                </nav>
+                <div class="search-panel">
+                    <form>
+                        <input type="search" class="search-panel__field">
+                        <button type="button" class="search-panel__button"><i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </form>
+                </div>
+            </header>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <div ui-view></div>
+    </div>
+
+    <footer class="footer">
+        <div class="content">
+            <a href="https://www.apple.com/mac/" target="_blank">MAC</a>
+            <a href="https://www.apple.com/ipad/" target="_blank">iPad</a>
+            <a href="https://www.apple.com/iphone/" target="_blank">iPhone</a>
+            <a href="https://www.apple.com/watch/" target="_blank">Watch</a>
+            <a href="https://www.apple.com/tv/" target="_blank">TV</a>
+            <a href="https://www.apple.com/music/" target="_blank">Muisc</a>
+            <a href="https://support.apple.com/" target="_blank">Support</a>
+        </div>
+    </footer>
 
 </div>
 

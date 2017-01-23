@@ -1,5 +1,14 @@
 @import "../../node_modules/normalize.scss/normalize";
+
+@import "common/variables";
 @import "common/fonts";
 @import "common/styles";
 @import "common/font-awesome/font-awesome";
 
+@import "blocks/header";
+@import "blocks/content";
+@import "blocks/logo";
+@import "blocks/_previews";
+@import "blocks/footer";
+@import "blocks/nav";
+@import "blocks/page-content";

@@ -1,0 +1,14 @@
+.header-wrap {
+  background: rgba(0, 0, 0, 0.8);
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  top: 0;
+}
+
+.header {
+  height: 70px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

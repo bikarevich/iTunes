@@ -1,27 +1,29 @@
 <div class="content">
     <h2>
-        Top Free Books
+        Top Moves
     </h2>
     <div class="previews">
-        <div class="item" ng-repeat="item in ctrl.topFreeBooks">
+        <div class="item" ng-repeat="item in ctrl.topMoves">
             <img src="{{item['im:image'][2].label}}">
             <div class="content">
                 <p class="name">{{item['im:name'].label}}</p>
                 <p class="previews-description">{{item.summary.label}}</p>
             </div>
+
         </div>
     </div>
 
     <h2>
-        Top Paid Books
+        Top Video Rentals
     </h2>
     <div class="previews">
-        <div class="item" ng-repeat="item in ctrl.topPaidBooks">
+        <div class="item" ng-repeat="item in ctrl.topVideoRentals">
             <img src="{{item['im:image'][2].label}}">
             <div class="content">
                 <p class="name">{{item['im:name'].label}}</p>
                 <p class="previews-description">{{item.summary.label}}</p>
             </div>
+
         </div>
     </div>
 </div>

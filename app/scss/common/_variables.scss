@@ -1,0 +1,10 @@
+$max-width: 1000px;
+$animation-time: .5s;
+
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
