@@ -1,0 +1,13 @@
+.song {
+  @include clearfix;
+  margin: 0 0 25px;
+
+  img {
+    max-width: 100px;
+    float: left;
+  }
+
+  .content {
+    padding-left: 120px;
+  }
+}

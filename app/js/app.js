@@ -7,10 +7,10 @@ var app = angular.module('App', [
 
 require('./controller/index');
 require('./service/index');
+require('./directive/index');
 
 app
-    .config(function ($stateProvider, $urlRouterProvider) {
-
+    .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
         $urlRouterProvider.otherwise("/index");
 
         $stateProvider
@@ -36,6 +36,12 @@ app
                 url: "/moves",
                 templateUrl: './views/movesPage.html',
                 controller: 'MovesPageController',
+                controllerAs: 'ctrl'
+            })
+            .state('song', {
+                url: "/music/:id",
+                templateUrl: './views/songPage.html',
+                controller: 'SongPageController',
                 controllerAs: 'ctrl'
             })
     });

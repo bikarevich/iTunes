@@ -11,4 +11,17 @@ module.exports = function ($http) {
                 return response;
             })
     };
+
+    this.$jsonp = function (url, params, options) {
+        return $http({
+            method: 'jsonp',
+            url: url,
+            params: params
+        }, options)
+            .then(function (response) {
+                return response;
+            }, function (response) {
+                return response;
+            })
+    };
 };

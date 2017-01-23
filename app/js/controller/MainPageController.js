@@ -1,9 +1,15 @@
-module.exports = function (MainPageService) {
+module.exports = function (MainPageService, $state) {
     var ctrl = this;
 
     ctrl.topSongs = [];
     ctrl.topMoves = [];
     ctrl.topBooks = [];
+
+    setTopMoves();
+    setTopBooks();
+    setTopSongs();
+
+    ctrl.goToSongView = goToSongView;
 
     function setTopMoves() {
         MainPageService.getTopMoves().then(function (response) {
@@ -20,10 +26,14 @@ module.exports = function (MainPageService) {
     function setTopSongs() {
         MainPageService.getTopSongs().then(function (response) {
             ctrl.topSongs = response.data.feed.entry;
+            console.log(response);
         });
     }
 
-    setTopMoves();
-    setTopBooks();
-    setTopSongs();
+    function goToSongView(id) {
+        console.log(id);
+        $state.go('song', {id: id});
+    }
+
+
 };

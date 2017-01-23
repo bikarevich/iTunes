@@ -1,8 +1,10 @@
-module.exports = function (MusicPageService) {
+module.exports = function (MusicPageService, $state) {
     var ctrl = this;
 
     ctrl.topAlbums = [];
     ctrl.topSongs = [];
+
+    ctrl.goToSongView = goToSongView;
 
     function setTopAlbums() {
         MusicPageService.getTopAlbums().then(function (response) {
@@ -15,6 +17,11 @@ module.exports = function (MusicPageService) {
         MusicPageService.getTopSongs().then(function (response) {
             ctrl.topSongs = response.data.feed.entry;
         });
+    }
+
+    function goToSongView(id) {
+        console.log(id);
+        $state.go('song', {id: id});
     }
 
     setTopAlbums();

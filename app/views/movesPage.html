@@ -1,10 +1,11 @@
 <div class="content">
+    <h1>Moves</h1>
     <h2>
         Top Moves
     </h2>
     <div class="previews">
         <div class="item" ng-repeat="item in ctrl.topMoves">
-            <img src="{{item['im:image'][2].label}}">
+            <img ng-src="{{item['im:image'][2].label}}">
             <div class="content">
                 <p class="name">{{item['im:name'].label}}</p>
                 <p class="previews-description">{{item.summary.label}}</p>
@@ -18,7 +19,7 @@
     </h2>
     <div class="previews">
         <div class="item" ng-repeat="item in ctrl.topVideoRentals">
-            <img src="{{item['im:image'][2].label}}">
+            <img ng-src="{{item['im:image'][2].label}}">
             <div class="content">
                 <p class="name">{{item['im:name'].label}}</p>
                 <p class="previews-description">{{item.summary.label}}</p>

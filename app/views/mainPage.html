@@ -1,14 +1,15 @@
 <div class="content">
+    <h1>Main Page</h1>
     <h2>
         Top Songs
     </h2>
     <div class="music-previews">
-        <div class="item" ng-repeat="item in ctrl.topSongs">
+        <div class="item" ng-repeat="item in ctrl.topSongs" ng-click="ctrl.goToSongView(item.id.attributes['im:id'])">
             <div class="title">
                 <span class="artist">{{item['im:artist'].label}}</span>
                 <span class="name">{{item['im:name'].label}}</span>
             </div>
-            <img src="{{item['im:image'][2].label}}">
+            <img ng-src="{{item['im:image'][2].label}}">
         </div>
     </div>
 
@@ -17,7 +18,7 @@
     </h2>
     <div class="previews">
         <div class="item" ng-repeat="item in ctrl.topMoves">
-            <img src="{{item['im:image'][2].label}}">
+            <img ng-src="{{item['im:image'][2].label}}">
             <div class="content">
                 <p class="name">{{item['im:name'].label}}</p>
                 <p class="previews-description">{{item.summary.label}}</p>
@@ -31,7 +32,7 @@
     </h2>
     <div class="previews">
         <div class="item" ng-repeat="item in ctrl.topBooks">
-            <img src="{{item['im:image'][2].label}}">
+            <img ng-src="{{item['im:image'][2].label}}">
             <div class="content">
                 <p class="name">{{item['im:name'].label}}</p>
                 <p class="artist">{{item['im:artist'].label}}</p>
