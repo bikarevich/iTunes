@@ -9,7 +9,6 @@ module.exports = function (MusicPageService, $state) {
     function setTopAlbums() {
         MusicPageService.getTopAlbums().then(function (response) {
             ctrl.topAlbums = response.data.feed.entry;
-            console.log(ctrl.topAlbums);
         });
     }
 

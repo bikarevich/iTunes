@@ -10,6 +10,7 @@ module.exports = function (MainPageService, $state) {
     setTopSongs();
 
     ctrl.goToSongView = goToSongView;
+    ctrl.goToMoveView = goToMoveView;
 
     function setTopMoves() {
         MainPageService.getTopMoves().then(function (response) {
@@ -26,13 +27,15 @@ module.exports = function (MainPageService, $state) {
     function setTopSongs() {
         MainPageService.getTopSongs().then(function (response) {
             ctrl.topSongs = response.data.feed.entry;
-            console.log(response);
         });
     }
 
     function goToSongView(id) {
-        console.log(id);
         $state.go('song', {id: id});
+    }
+
+    function goToMoveView(id) {
+        $state.go('move', {id: id});
     }
 
 

@@ -44,4 +44,10 @@ app
                 controller: 'SongPageController',
                 controllerAs: 'ctrl'
             })
+            .state('move', {
+                url: "/moves/:id",
+                templateUrl: './views/movePage.html',
+                controller: 'MovePageController',
+                controllerAs: 'ctrl'
+            })
     });

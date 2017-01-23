@@ -5,3 +5,4 @@ app.controller('BooksPageController', require('./BooksPageController.js'));
 app.controller('MusicPageController', require('./MusicPageController.js'));
 app.controller('MovesPageController', require('./MovesPageController.js'));
 app.controller('SongPageController', require('./SongPageController.js'));
+app.controller('MovePageController', require('./MovePageController.js'));

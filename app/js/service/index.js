@@ -1,8 +1,9 @@
 var app = require('angular').module('App');
 
 app.service('API', require('./API'));
-app.service('MainPageService', require('./MainPageService'));
-app.service('MusicPageService', require('./MusicPageService'));
-app.service('BooksPageService', require('./BooksPageService'));
-app.service('MovesPageService', require('./MovesPageService'));
-app.service('SongPageService', require('./SongPageService'));
+app.service('MainPageService', require('./MainPageService.js'));
+app.service('MusicPageService', require('./MusicPageService.js'));
+app.service('BooksPageService', require('./BooksPageService.js'));
+app.service('MovesPageService', require('./MovesPageService.js'));
+app.service('SongPageService', require('./SongPageService.js'));
+app.service('MovePageService', require('./MovePageService.js'));

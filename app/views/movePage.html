@@ -1,0 +1,22 @@
+<div class="content">
+    <h1>{{ctrl.moveData.trackName}}</h1>
+    <div class="song">
+        <img ng-src="{{ctrl.moveData.artworkUrl100}}">
+        <div class="content">
+            <p><strong>Author:</strong> {{ctrl.moveData.artistName}}</p>
+            <p><strong>Content Advisory Rating:</strong> {{ctrl.moveData.contentAdvisoryRating}}</p>
+            <p><strong>Price:</strong> {{ctrl.moveData.trackPrice}} $</p>
+        </div>
+    </div>
+
+    <p><strong>Description:</strong></p>
+    <p>
+        {{ctrl.moveData.longDescription}}
+    </p>
+
+    <div class="song-preview">
+        <p><strong>Preview:</strong></p>
+        <audio controls ng-src="{{ctrl.moveData.previewUrl}}"></audio>
+    </div>
+
+</div>

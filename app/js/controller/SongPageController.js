@@ -9,7 +9,6 @@ module.exports = function (SongPageService, $state, $sce) {
     function setSongData() {
         SongPageService.getSongData(id).then(function(response) {
             ctrl.songData = response.data.results[0];
-            console.log(ctrl.songData);
         })
     }
 };
