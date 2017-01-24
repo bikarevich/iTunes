@@ -1,0 +1,33 @@
+<div class="content">
+    <h1>Search Results</h1>
+
+    <table class="results" ng-show="ctrl.results.length > 0">
+        <tr>
+            <th><!----></th>
+            <th>
+                Author
+            </th>
+            <th>
+                Type
+            </th>
+            <th>
+                Collection
+            </th>
+        </tr>
+        <tr ng-repeat="item in ctrl.results" ng-click="ctrl.goToMoveView(item.trackId)">
+            <td>
+                <img ng-src="{{item.artworkUrl100}}">
+            </td>
+            <td>
+                {{item.artistName}}
+            </td>
+            <td>
+                {{item.kind}}
+            </td>
+            <td>
+                {{item.collectionName}}
+            </td>
+        </tr>
+    </table>
+
+</div>

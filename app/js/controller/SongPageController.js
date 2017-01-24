@@ -9,6 +9,7 @@ module.exports = function (SongPageService, $state, $sce) {
     function setSongData() {
         SongPageService.getSongData(id).then(function(response) {
             ctrl.songData = response.data.results[0];
+            ctrl.songData.previewUrl = $sce.trustAsResourceUrl(ctrl.songData.previewUrl);
         })
     }
 };

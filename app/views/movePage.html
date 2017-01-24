@@ -3,20 +3,20 @@
     <div class="song">
         <img ng-src="{{ctrl.moveData.artworkUrl100}}">
         <div class="content">
-            <p><strong>Author:</strong> {{ctrl.moveData.artistName}}</p>
-            <p><strong>Content Advisory Rating:</strong> {{ctrl.moveData.contentAdvisoryRating}}</p>
-            <p><strong>Price:</strong> {{ctrl.moveData.trackPrice}} $</p>
+            <p ng-show="!!ctrl.moveData.artistName"><strong>Author:</strong> {{ctrl.moveData.artistName}}</p>
+            <p ng-show="!!ctrl.moveData.contentAdvisoryRating"><strong>Content Advisory Rating:</strong> {{ctrl.moveData.contentAdvisoryRating}}</p>
+            <p ng-show="!!ctrl.moveData.trackPrice"><strong>Price:</strong> {{ctrl.moveData.trackPrice}} $</p>
         </div>
     </div>
 
-    <p><strong>Description:</strong></p>
-    <p>
+    <p ng-show="!!ctrl.moveData.longDescription"><strong>Description:</strong></p>
+    <p ng-show="!!ctrl.moveData.longDescription">
         {{ctrl.moveData.longDescription}}
     </p>
 
-    <div class="song-preview">
+    <div class="song-preview" ng-show="!!ctrl.moveData.previewUrl">
         <p><strong>Preview:</strong></p>
-        <audio controls ng-src="{{ctrl.moveData.previewUrl}}"></audio>
+        <video controls ng-src="{{ctrl.moveData.previewUrl}}"></video>
     </div>
 
 </div>

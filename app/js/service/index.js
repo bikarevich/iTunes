@@ -7,3 +7,6 @@ app.service('BooksPageService', require('./BooksPageService.js'));
 app.service('MovesPageService', require('./MovesPageService.js'));
 app.service('SongPageService', require('./SongPageService.js'));
 app.service('MovePageService', require('./MovePageService.js'));
+app.service('BookPageService', require('./BookPageService.js'));
+app.service('SearchPanelService', require('./SearchPanelService.js'));
+app.service('SearchResultsPageService', require('./SearchResultsPageService.js'));

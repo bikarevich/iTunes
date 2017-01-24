@@ -4,11 +4,11 @@
         Top Free Books
     </h2>
     <div class="previews">
-        <div class="item" ng-repeat="item in ctrl.topFreeBooks">
+        <div class="item" ng-repeat="item in ctrl.topFreeBooks" ng-click="ctrl.goToBookView(item.id.attributes['im:id'])">
             <img ng-src="{{item['im:image'][2].label}}">
             <div class="content">
                 <p class="name">{{item['im:name'].label}}</p>
-                <p class="previews-description">{{item.summary.label}}</p>
+                <p class="previews-description" ng-bind-html="item.summary.label"></p>
             </div>
         </div>
     </div>
@@ -17,11 +17,11 @@
         Top Paid Books
     </h2>
     <div class="previews">
-        <div class="item" ng-repeat="item in ctrl.topPaidBooks">
+        <div class="item" ng-repeat="item in ctrl.topPaidBooks" ng-click="ctrl.goToBookView(item.id.attributes['im:id'])">
             <img ng-src="{{item['im:image'][2].label}}">
             <div class="content">
                 <p class="name">{{item['im:name'].label}}</p>
-                <p class="previews-description">{{item.summary.label}}</p>
+                <p class="previews-description" ng-bind-html="item.summary.label"></p>
             </div>
         </div>
     </div>

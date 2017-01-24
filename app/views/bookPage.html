@@ -1,0 +1,16 @@
+<div class="content">
+    <h1>{{ctrl.bookData.trackName}}</h1>
+    <div class="song">
+        <img ng-src="{{ctrl.bookData.artworkUrl100}}">
+        <div class="content">
+            <p><strong>Author:</strong> {{ctrl.bookData.artistName}}</p>
+            <p><strong>Average User Rating:</strong> {{ctrl.bookData.averageUserRating}}</p>
+            <p><strong>Price:</strong> {{ctrl.bookData.price}} $</p>
+        </div>
+    </div>
+
+    <p><strong>Description:</strong></p>
+
+    <p ng-bind-html="ctrl.bookData.description"></p>
+
+</div>

@@ -8,11 +8,13 @@ var app = angular.module('App', [
 require('./controller/index');
 require('./service/index');
 require('./directive/index');
+require('./component/index');
+require('./component/mediaPlayer/MediaPlayerComponent');
 
 app
-    .config(function ($stateProvider, $urlRouterProvider, $httpProvider) {
+    .config(function ($stateProvider, $urlRouterProvider, $compileProvider) {
         $urlRouterProvider.otherwise("/index");
-
+        $compileProvider.preAssignBindingsEnabled(true);
         $stateProvider
             .state('index', {
                 url: "/index",
@@ -48,6 +50,18 @@ app
                 url: "/moves/:id",
                 templateUrl: './views/movePage.html',
                 controller: 'MovePageController',
+                controllerAs: 'ctrl'
+            })
+            .state('book', {
+                url: "/books/:id",
+                templateUrl: './views/bookPage.html',
+                controller: 'BookPageController',
+                controllerAs: 'ctrl'
+            })
+            .state('search', {
+                url: "/search",
+                templateUrl: './views/searchResultsPage.html',
+                controller: 'SearchResultsPageController',
                 controllerAs: 'ctrl'
             })
     });

@@ -2747,3 +2747,19 @@ body {
     float: left; }
   .song .content {
     padding-left: 120px; }
+
+.results {
+  width: 100%; }
+  .results th, .results td {
+    padding: 15px;
+    text-align: left; }
+    .results th img, .results td img {
+      max-width: 100px;
+      max-height: 100px; }
+  .results tr {
+    cursor: pointer;
+    transition: all ease 0.5s; }
+    .results tr:nth-child(2n) {
+      background: rgba(0, 0, 0, 0.02); }
+    .results tr:hover {
+      background: rgba(0, 0, 0, 0.04); }

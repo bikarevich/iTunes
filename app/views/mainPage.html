@@ -21,9 +21,8 @@
             <img ng-src="{{item['im:image'][2].label}}">
             <div class="content">
                 <p class="name">{{item['im:name'].label}}</p>
-                <p class="previews-description">{{item.summary.label}}</p>
+                <p class="previews-description" ng-bind-html="item.summary.label"></p>
             </div>
-
         </div>
     </div>
 
@@ -31,12 +30,12 @@
         Top Books
     </h2>
     <div class="previews">
-        <div class="item" ng-repeat="item in ctrl.topBooks">
+        <div class="item" ng-repeat="item in ctrl.topBooks" ng-click="ctrl.goToBookView(item.id.attributes['im:id'])">
             <img ng-src="{{item['im:image'][2].label}}">
             <div class="content">
                 <p class="name">{{item['im:name'].label}}</p>
                 <p class="artist">{{item['im:artist'].label}}</p>
-                <p class="previews-description">{{item.summary.label}}</p>
+                <p class="previews-description" ng-bind-html="item.summary.label"></p>
             </div>
         </div>
     </div>

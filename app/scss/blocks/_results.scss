@@ -1,0 +1,26 @@
+.results {
+  width: 100%;
+
+  th, td {
+    padding: 15px;
+    text-align: left;
+
+    img {
+      max-width: 100px;
+      max-height: 100px;
+    }
+  }
+
+  tr {
+    cursor: pointer;
+    transition: all ease $animation-time;
+
+    &:nth-child(2n) {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.04);
+    }
+  }
+}
