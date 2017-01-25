@@ -4,6 +4,7 @@
     <table class="results" ng-show="ctrl.results.length > 0">
         <tr>
             <th><!----></th>
+            <th>Title</th>
             <th>
                 Author
             </th>
@@ -17,6 +18,9 @@
         <tr ng-repeat="item in ctrl.results" ng-click="ctrl.goToMoveView(item.trackId)">
             <td>
                 <img ng-src="{{item.artworkUrl100}}">
+            </td>
+            <td>
+                {{item.trackName}}
             </td>
             <td>
                 {{item.artistName}}

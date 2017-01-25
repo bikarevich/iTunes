@@ -1,10 +1,13 @@
 <div class="media-player">
-    <button class="button play" ng-show="!ctrl.isPlaying" ng-click="ctrl.play()">
-        <i class="fa fa-play" aria-hidden="true"></i>
-    </button>
-    <button class="button stop" ng-show="ctrl.isPlaying" ng-click="ctrl.pause()">
-        <i class="fa fa-stop" aria-hidden="true"></i>
-    </button>
+    <div>
+        <button class="button play" ng-show="!ctrl.isPlaying" ng-click="ctrl.play()">
+            <i class="fa fa-play" aria-hidden="true"></i>
+        </button>
+        <button class="button stop" ng-show="ctrl.isPlaying" ng-click="ctrl.pause()">
+            <i class="fa fa-stop" aria-hidden="true"></i>
+        </button>
+    </div>
+
     <span class="track-control-panel track control-panel">
         <span class="track-control control"></span>
         <span class="label">{{ctrl.currentTime.minutes}}:{{ctrl.currentTime.seconds}} / {{ctrl.totalTime.minutes}}:{{ctrl.totalTime.seconds}}</span>

@@ -13,19 +13,22 @@
             trackPanelWidth = $trackPanel.offsetWidth,
             volumePanelWidth = $volPanel.offsetWidth,
             volumeCoords = getCoords($volPanel),
-            areaNewLeft = 0,
+            trackCoords = getCoords($trackPanel),
+            volumePosition = 0,
+            trackPosition = 0,
             duration,
             volume,
             currentPerc;
         volumeCoords.right = volumeCoords.left + volumePanelWidth;
+        trackCoords.right = trackCoords.left + trackPanelWidth;
         ctrl.isPlaying = false;
         ctrl.currentTime = {
-            minutes : '00',
-            seconds : '00'
+            minutes: '00',
+            seconds: '00'
         };
         ctrl.totalTime = {
-            minutes : '00',
-            seconds : '00'
+            minutes: '00',
+            seconds: '00'
         };
 
         ctrl.play = play;
@@ -54,26 +57,51 @@
             $scope.$apply();
         });
 
-        $volBtn.addEventListener('mousedown', function () {
-            document.addEventListener('mousemove', leftAction);
+        $trackBtn.addEventListener('mousedown', function () {
+            document.addEventListener('mousemove', timeDrag);
             document.addEventListener('mouseup', function handler() {
-                document.removeEventListener('mousemove', leftAction);
+                document.removeEventListener('mousemove', timeDrag);
                 document.removeEventListener('mouseup', handler);
             });
         });
 
-        function leftAction(e) {
-            if (e.pageX - volumeCoords.left < 0) {
-                areaNewLeft = 0;
-            } else if (e.pageX > volumeCoords.right) {
-                areaNewLeft = volumePanelWidth;
+        $volBtn.addEventListener('mousedown', function () {
+            document.addEventListener('mousemove', volumeDrag);
+            document.addEventListener('mouseup', function handler() {
+                document.removeEventListener('mousemove', volumeDrag);
+                document.removeEventListener('mouseup', handler);
+            });
+        });
+        
+        function timeDrag(e) {
+            if (e.pageX - trackCoords.left < 0) {
+                trackPosition = 0;
+            } else if (e.pageX > trackCoords.right) {
+                trackPosition = trackPanelWidth;
             } else {
-                areaNewLeft = e.pageX - volumeCoords.left;
+                trackPosition = e.pageX - trackCoords.left;
             }
 
-            $player.volume = areaNewLeft/volumePanelWidth;
+            console.log(e.pageX);
+            console.log(trackCoords);
 
-            $volBtn.style.transform = 'translate(' + areaNewLeft + 'px, 0px)';
+            $player.currentTime = duration * trackPosition/trackPanelWidth;
+
+            $trackBtn.style.transform = 'translate(' + trackPosition + 'px, 0px)';
+        }
+
+        function volumeDrag(e) {
+            if (e.pageX - volumeCoords.left < 0) {
+                volumePosition = 0;
+            } else if (e.pageX > volumeCoords.right) {
+                volumePosition = volumePanelWidth;
+            } else {
+                volumePosition = e.pageX - volumeCoords.left;
+            }
+
+            $player.volume = volumePosition / volumePanelWidth;
+
+            $volBtn.style.transform = 'translate(' + volumePosition + 'px, 0px)';
         }
 
         function getCoords(elem) {
@@ -114,4 +142,5 @@
     });
 
 }(require('angular').module('App')));
+
 

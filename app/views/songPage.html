@@ -5,10 +5,16 @@
         <div class="content">
             <p><strong>Author:</strong> {{ctrl.songData.artistName}}</p>
             <p><strong>Album:</strong> {{ctrl.songData.collectionName}}</p>
-            <p><strong>Price:</strong> {{ctrl.songData.trackPrice}} $</p>
+            <p><strong>Buy:</strong> <a class="buy-btn" ng-href="{{ctrl.songData.trackViewUrl}}" target="_blank">{{ctrl.songData.trackPrice}} $</a></p>
         </div>
     </div>
 
-    <media-player src="{{ctrl.songData.previewUrl}}" ></media-player>
+    <div ng-show="!!ctrl.songData.previewUrl">
+        <p>
+            <strong>Preview:</strong>
+        </p>
+
+        <media-player src="{{ctrl.songData.previewUrl}}" ></media-player>
+    </div>
 
 </div>

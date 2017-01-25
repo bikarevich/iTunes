@@ -1,0 +1,29 @@
+.buy-btn {
+  font-size: 16px;
+  line-height: 2.00625;
+  font-weight: 500;
+  letter-spacing: normal;
+  background-color: #2189db;
+  background: -webkit-linear-gradient(#42a1ec, #0070c9);
+  background: linear-gradient(#42a1ec, #0070c9);
+  border: 1px solid #07c;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  padding: 0 15px;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(28,115,184,0.64);
+  white-space: nowrap;
+  text-decoration: none;
+
+  &:hover {
+    background: linear-gradient(#51a9ee, #147bcd);
+    border-color: #1482d0;
+  }
+
+  &:active {
+    background: #147bcd;
+    border-color: #1482d0;
+  }
+}

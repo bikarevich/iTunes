@@ -4,8 +4,9 @@
         <img ng-src="{{ctrl.moveData.artworkUrl100}}">
         <div class="content">
             <p ng-show="!!ctrl.moveData.artistName"><strong>Author:</strong> {{ctrl.moveData.artistName}}</p>
+            <p ng-show="!!ctrl.moveData.collectionName"><strong>Album:</strong> {{ctrl.moveData.collectionName}}</p>
             <p ng-show="!!ctrl.moveData.contentAdvisoryRating"><strong>Content Advisory Rating:</strong> {{ctrl.moveData.contentAdvisoryRating}}</p>
-            <p ng-show="!!ctrl.moveData.trackPrice"><strong>Price:</strong> {{ctrl.moveData.trackPrice}} $</p>
+            <p><strong>Buy:</strong> <a class="buy-btn" ng-href="{{ctrl.moveData.trackViewUrl}}" target="_blank">{{ctrl.moveData.trackPrice}} $</a></p>
         </div>
     </div>
 
@@ -13,4 +14,12 @@
     <p ng-show="!!ctrl.moveData.longDescription">
         {{ctrl.moveData.longDescription}}
     </p>
+
+    <div ng-show="!!ctrl.moveData.previewUrl">
+        <p>
+            <strong>Preview:</strong>
+        </p>
+
+        <media-player src="{{ctrl.moveData.previewUrl}}" ></media-player>
+    </div>
 </div>
