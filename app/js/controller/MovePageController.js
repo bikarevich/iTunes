@@ -1,4 +1,4 @@
-module.exports = function (MovePageService, $state) {
+module.exports = function (MovePageService, $state, $sce) {
     var ctrl = this;
     var id = $state.params.id;
 
@@ -9,6 +9,7 @@ module.exports = function (MovePageService, $state) {
     function setSongData() {
         MovePageService.getMoveData(id).then(function(response) {
             ctrl.moveData = response.data.results[0];
+            ctrl.moveData.previewUrl = $sce.trustAsResourceUrl(ctrl.moveData.previewUrl);
         })
     }
 };

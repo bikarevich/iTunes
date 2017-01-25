@@ -19,7 +19,6 @@ module.exports = function (MusicPageService, $state) {
     }
 
     function goToSongView(id) {
-        console.log(id);
         $state.go('song', {id: id});
     }
 
