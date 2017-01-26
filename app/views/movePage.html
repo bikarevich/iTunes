@@ -1,25 +1,18 @@
 <div class="content">
-    <h1>{{ctrl.moveData.trackName}}</h1>
     <div class="song">
-        <img ng-src="{{ctrl.moveData.artworkUrl100}}">
-        <div class="content">
+        <div class="left-col">
+            <img ng-src="{{ctrl.moveData.largePreviewImgUrl}}">
+            <a class="buy-btn" ng-href="{{ctrl.moveData.trackViewUrl}}" target="_blank">{{ctrl.moveData.trackPrice}} {{ctrl.moveData.currency}}</a>
             <p ng-show="!!ctrl.moveData.artistName"><strong>Author:</strong> {{ctrl.moveData.artistName}}</p>
             <p ng-show="!!ctrl.moveData.collectionName"><strong>Album:</strong> {{ctrl.moveData.collectionName}}</p>
             <p ng-show="!!ctrl.moveData.contentAdvisoryRating"><strong>Content Advisory Rating:</strong> {{ctrl.moveData.contentAdvisoryRating}}</p>
-            <p><strong>Buy:</strong> <a class="buy-btn" ng-href="{{ctrl.moveData.trackViewUrl}}" target="_blank">{{ctrl.moveData.trackPrice}} $</a></p>
         </div>
-    </div>
-
-    <p ng-show="!!ctrl.moveData.longDescription"><strong>Description:</strong></p>
-    <p ng-show="!!ctrl.moveData.longDescription">
-        {{ctrl.moveData.longDescription}}
-    </p>
-
-    <div ng-show="!!ctrl.moveData.previewUrl">
-        <p>
-            <strong>Preview:</strong>
-        </p>
-
-        <media-player src="{{ctrl.moveData.previewUrl}}" ></media-player>
+        <div class="content">
+            <h1 class="content-title">{{ctrl.moveData.trackName}}</h1>
+            <p ng-show="!!ctrl.moveData.longDescription"><strong>Description:</strong></p>
+            <p ng-show="!!ctrl.moveData.longDescription">
+                {{ctrl.moveData.longDescription}}
+            </p>
+        </div>
     </div>
 </div>

@@ -10,17 +10,16 @@
             $volPanel = $wrap.getElementsByClassName('volume-control-panel')[0],
             $trackBtn = $wrap.getElementsByClassName('track-control')[0],
             $trackPanel = $wrap.getElementsByClassName('track-control-panel')[0],
-            trackPanelWidth = $trackPanel.offsetWidth,
-            volumePanelWidth = $volPanel.offsetWidth,
-            volumeCoords = getCoords($volPanel),
-            trackCoords = getCoords($trackPanel),
             volumePosition = 0,
             trackPosition = 0,
+            trackPanelWidth,
+            volumePanelWidth,
+            volumeCoords,
+            trackCoords,
             duration,
             volume,
             currentPerc;
-        volumeCoords.right = volumeCoords.left + volumePanelWidth;
-        trackCoords.right = trackCoords.left + trackPanelWidth;
+
         ctrl.isPlaying = false;
         ctrl.currentTime = {
             minutes: '00',
@@ -35,10 +34,16 @@
         ctrl.pause = pause;
 
         $player.addEventListener("loadedmetadata", function () {
+            trackPanelWidth = $trackPanel.offsetWidth;
+            volumePanelWidth = $volPanel.offsetWidth;
+            volumeCoords = getCoords($volPanel);
+            trackCoords = getCoords($trackPanel);
+            volumeCoords.right = volumeCoords.left + volumePanelWidth;
+            trackCoords.right = trackCoords.left + trackPanelWidth;
+
             duration = Math.round($player.duration);
             ctrl.totalTime.minutes = Math.floor(duration / 60);
             ctrl.totalTime.seconds = duration - ctrl.totalTime.minutes * 60;
-
             $volBtn.style.transform = 'translate(' + $player.volume * volumePanelWidth + 'px, 0px)';
 
             $scope.$apply();
@@ -72,7 +77,7 @@
                 document.removeEventListener('mouseup', handler);
             });
         });
-        
+
         function timeDrag(e) {
             if (e.pageX - trackCoords.left < 0) {
                 trackPosition = 0;
@@ -81,26 +86,19 @@
             } else {
                 trackPosition = e.pageX - trackCoords.left;
             }
-
-            console.log(e.pageX);
-            console.log(trackCoords);
-
-            $player.currentTime = duration * trackPosition/trackPanelWidth;
-
+            $player.currentTime = duration * trackPosition / trackPanelWidth;
             $trackBtn.style.transform = 'translate(' + trackPosition + 'px, 0px)';
         }
 
         function volumeDrag(e) {
-            if (e.pageX - volumeCoords.left < 0) {
+            if (e.pageX < volumeCoords.left) {
                 volumePosition = 0;
             } else if (e.pageX > volumeCoords.right) {
                 volumePosition = volumePanelWidth;
             } else {
                 volumePosition = e.pageX - volumeCoords.left;
             }
-
             $player.volume = volumePosition / volumePanelWidth;
-
             $volBtn.style.transform = 'translate(' + volumePosition + 'px, 0px)';
         }
 

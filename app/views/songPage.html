@@ -1,20 +1,16 @@
 <div class="content">
-    <h1>{{ctrl.songData.trackName}}</h1>
-    <div class="song">
-        <img ng-src="{{ctrl.songData.artworkUrl100}}">
+    <div class="song songColorWrap">
+        <div class="left-col">
+            <img ng-src="{{ctrl.songData.largePreviewImgUrl}}">
+            <a class="buy-btn" ng-href="{{ctrl.songData.trackViewUrl}}" target="_blank">{{ctrl.songData.trackPrice}} {{ctrl.songData.currency}}</a>
+            <p>
+                <strong>Author:</strong> {{ctrl.songData.artistName}}<br>
+                <strong>Album:</strong> {{ctrl.songData.collectionName}}
+            </p>
+        </div>
         <div class="content">
-            <p><strong>Author:</strong> {{ctrl.songData.artistName}}</p>
-            <p><strong>Album:</strong> {{ctrl.songData.collectionName}}</p>
-            <p><strong>Buy:</strong> <a class="buy-btn" ng-href="{{ctrl.songData.trackViewUrl}}" target="_blank">{{ctrl.songData.trackPrice}} $</a></p>
+            <h1 class="content-title">{{ctrl.songData.collectionName}}</h1>
+            <media-player src="{{ctrl.songData.previewUrl}}" ></media-player>
         </div>
     </div>
-
-    <div ng-show="!!ctrl.songData.previewUrl">
-        <p>
-            <strong>Preview:</strong>
-        </p>
-
-        <media-player src="{{ctrl.songData.previewUrl}}" ></media-player>
-    </div>
-
 </div>

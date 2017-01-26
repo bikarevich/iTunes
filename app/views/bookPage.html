@@ -1,16 +1,33 @@
+<!--<div class="content">-->
+    <!--<h1>{{ctrl.bookData.trackName}}</h1>-->
+    <!--<div class="song">-->
+        <!--<img ng-src="{{ctrl.bookData.artworkUrl100}}">-->
+        <!--<div class="content">-->
+            <!--<p><strong>Author:</strong> {{ctrl.bookData.artistName}}</p>-->
+            <!--<p><strong>Average User Rating:</strong> {{ctrl.bookData.averageUserRating}}</p>-->
+            <!--<p><strong>Buy:</strong> <a class="buy-btn" ng-href="{{ctrl.bookData.trackViewUrl}}" target="_blank">{{ctrl.bookData.price}} $</a></p>-->
+        <!--</div>-->
+    <!--</div>-->
+
+    <!--<p><strong>Description:</strong></p>-->
+
+    <!--<p ng-bind-html="ctrl.bookData.description"></p>-->
+
+<!--</div>-->
+
 <div class="content">
-    <h1>{{ctrl.bookData.trackName}}</h1>
     <div class="song">
-        <img ng-src="{{ctrl.bookData.artworkUrl100}}">
-        <div class="content">
+        <div class="left-col">
+            <img ng-src="{{ctrl.bookData.largePreviewImgUrl}}">
+            <a class="buy-btn" ng-href="{{ctrl.bookData.trackViewUrl}}" target="_blank">{{ctrl.bookData.price}} {{ctrl.bookData.currency}}</a>
             <p><strong>Author:</strong> {{ctrl.bookData.artistName}}</p>
             <p><strong>Average User Rating:</strong> {{ctrl.bookData.averageUserRating}}</p>
-            <p><strong>Price:</strong> {{ctrl.bookData.price}} $</p>
+            <p ng-show="!!ctrl.bookData.contentAdvisoryRating"><strong>Content Advisory Rating:</strong> {{ctrl.bookData.contentAdvisoryRating}}</p>
+        </div>
+        <div class="content">
+            <h1 class="content-title">{{ctrl.bookData.trackName}}</h1>
+            <p ng-show="!!ctrl.bookData.description"><strong>Description:</strong></p>
+            <p ng-bind-html="ctrl.bookData.description"></p>
         </div>
     </div>
-
-    <p><strong>Description:</strong></p>
-
-    <p ng-bind-html="ctrl.bookData.description"></p>
-
 </div>
