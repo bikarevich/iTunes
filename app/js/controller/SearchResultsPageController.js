@@ -1,10 +1,10 @@
 module.exports = function (SearchResultsPageService, $rootScope, $scope, $state) {
     var ctrl = this;
 
-    ctrl.goToMoveView = goToMoveView;
+    ctrl.goToSongView = goToSongView;
 
-    function goToMoveView(id) {
-        $state.go('move', {id: id});
+    function goToSongView(id) {
+        $state.go('song', {id: id});
     }
 
     $rootScope.$on("CallUpdateSearchResults", function(){

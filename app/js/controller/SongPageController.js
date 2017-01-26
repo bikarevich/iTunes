@@ -26,6 +26,9 @@ module.exports = function (SongPageService, $state, $sce, $scope, SearchResultsP
             var date = new Date(ctrl.songData.releaseDate);
             var newDate = date.getFullYear() + '.' + ('0' + (date.getMonth()+1)).slice(-2) + '.' + ('0' + date.getDate()).slice(-2);
             ctrl.songData.releaseDate = newDate;
+            if(ctrl.songData.trackPrice < 0) {
+                ctrl.songData.trackPrice = 0
+            }
         })
     }
 
@@ -62,11 +65,11 @@ module.exports = function (SongPageService, $state, $sce, $scope, SearchResultsP
         }
 
         img.addEventListener('load', function handler() {
-            ctx.filter = 'blur(30px)';
+            ctx.drawImage(img, -(imgWidth-width)/2, -(imgHeight-height)/2, imgWidth, imgHeight);
+            ctx.filter = 'blur(35px)';
             ctx.drawImage(img, -(imgWidth-width)/2, -(imgHeight-height)/2, imgWidth, imgHeight);
             ctx.fillStyle = 'rgba(0, 0, 0, .4)';
             ctx.fillRect(0, 0, width, height);
-
             data = ctx.getImageData(0, 0, imgWidth, imgHeight);
             length = data.data.length;
             while ( (i += blockSize * 4) < length ) {
@@ -78,6 +81,7 @@ module.exports = function (SongPageService, $state, $sce, $scope, SearchResultsP
             rgb.r = Math.floor(rgb.r/count);
             rgb.g = Math.floor(rgb.g/count);
             rgb.b = Math.floor(rgb.b/count);
+
             luma = 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
             if(luma < 85) {
                 document.getElementsByClassName('songColorWrap')[0].classList.add('white');
