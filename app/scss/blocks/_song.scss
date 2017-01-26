@@ -7,13 +7,27 @@
     margin-bottom: 25px;
   }
 
-  & > .content {
+  & > .song-content {
     float: right;
     width: calc(100% - 450px);
   }
 
   .content-title {
-    margin-top: 0;
+    margin: 0;
+    font-size: 36px;
+    font-weight: normal;
+  }
+
+  .content-subtitle {
+    margin: 0 0 40px;
+    color: #f82c32;
+    text-decoration: underline;
+    font-size: 24px;
+    font-weight: normal;
+
+    span {
+      cursor: pointer;
+    }
   }
 
   .left-col {

@@ -1,4 +1,4 @@
-module.exports = function (SongPageService, $state, $sce, $scope) {
+module.exports = function (SongPageService, $state, $sce, $scope, SearchResultsPageService, SearchPanelService) {
     var ctrl = this,
         id = $state.params.id,
         img = document.createElement('img'),
@@ -7,13 +7,14 @@ module.exports = function (SongPageService, $state, $sce, $scope) {
         body = document.getElementsByTagName('body')[0];
 
     img.crossOrigin = "Anonymous";
-
     ctrl.songData = [];
+
+    ctrl.findAuthor = findAuthor;
 
     setSongData();
 
     $scope.$on("$destroy", function() {
-        body.removeChild(pageBg);
+        body.style.backgroundImage = '';
     });
 
     function setSongData() {
@@ -22,6 +23,9 @@ module.exports = function (SongPageService, $state, $sce, $scope) {
             ctrl.songData.largePreviewImgUrl = getLargePreviewImage();
             ctrl.songData.previewUrl = $sce.trustAsResourceUrl(ctrl.songData.previewUrl);
             setSongPageBg(ctrl.songData.largePreviewImgUrl);
+            var date = new Date(ctrl.songData.releaseDate);
+            var newDate = date.getFullYear() + '.' + ('0' + (date.getMonth()+1)).slice(-2) + '.' + ('0' + date.getDate()).slice(-2);
+            ctrl.songData.releaseDate = newDate;
         })
     }
 
@@ -34,10 +38,10 @@ module.exports = function (SongPageService, $state, $sce, $scope) {
             height = window.innerHeight,
             k = width/height,
             defImgSize = 1000,
-            blockSize = 5,
+            blockSize = 4,
             defaultRGB = {r:0,g:0,b:0},
             data, width, height,
-            i = -4,
+            i = -3,
             length,
             rgb = {r:0,g:0,b:0},
             luma,
@@ -60,32 +64,36 @@ module.exports = function (SongPageService, $state, $sce, $scope) {
         img.addEventListener('load', function handler() {
             ctx.filter = 'blur(30px)';
             ctx.drawImage(img, -(imgWidth-width)/2, -(imgHeight-height)/2, imgWidth, imgHeight);
+            ctx.fillStyle = 'rgba(0, 0, 0, .4)';
+            ctx.fillRect(0, 0, width, height);
 
-            data = ctx.getImageData(0, 0, width, height);
+            data = ctx.getImageData(0, 0, imgWidth, imgHeight);
             length = data.data.length;
-
             while ( (i += blockSize * 4) < length ) {
                 ++count;
                 rgb.r += data.data[i];
                 rgb.g += data.data[i+1];
                 rgb.b += data.data[i+2];
             }
-
             rgb.r = Math.floor(rgb.r/count);
             rgb.g = Math.floor(rgb.g/count);
             rgb.b = Math.floor(rgb.b/count);
-
             luma = 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
-
-            if(luma > 70) {
-                document.getElementsByClassName('songColorWrap')[0].classList.remove('white');
-            } else {
+            if(luma < 85) {
                 document.getElementsByClassName('songColorWrap')[0].classList.add('white');
+            } else {
+                document.getElementsByClassName('songColorWrap')[0].classList.remove('white');
             }
 
-            ctx.fillStyle = 'rgba(0, 0, 0, .4)';
-            ctx.fillRect(0, 0, width, height);
-            body.appendChild(pageBg);
+            var reader = new window.FileReader();
+
+            pageBg.toBlob(function (blob) {
+                reader.readAsDataURL(blob);
+                reader.onloadend = function() {
+                    body.style.backgroundImage = 'url(' + reader.result  + ')';
+                }
+            });
+
             img.removeEventListener('load', handler);
         });
 
@@ -95,5 +103,16 @@ module.exports = function (SongPageService, $state, $sce, $scope) {
         });
 
         img.src = url;
+    }
+
+    function findAuthor(name) {
+        SearchPanelService.getSearchResults({term : name, limit : 25, media : 'music'}).then(function (response) {
+            SearchResultsPageService.setResults(response.data.results);
+            if($state.current.name != 'search') {
+                $state.go('search');
+            } else {
+                $rootScope.$emit("CallUpdateSearchResults", {});
+            }
+        });
     }
 };

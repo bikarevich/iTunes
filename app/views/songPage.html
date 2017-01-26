@@ -4,13 +4,15 @@
             <img ng-src="{{ctrl.songData.largePreviewImgUrl}}">
             <a class="buy-btn" ng-href="{{ctrl.songData.trackViewUrl}}" target="_blank">{{ctrl.songData.trackPrice}} {{ctrl.songData.currency}}</a>
             <p>
-                <strong>Author:</strong> {{ctrl.songData.artistName}}<br>
-                <strong>Album:</strong> {{ctrl.songData.collectionName}}
+                <strong>Style:</strong> {{ctrl.songData.primaryGenreName}}<br>
+                <strong>Release Date:</strong> {{ctrl.songData.releaseDate}}<br>
+                <strong>Country:</strong> {{ctrl.songData.country}}<br>
             </p>
         </div>
-        <div class="content">
-            <h1 class="content-title">{{ctrl.songData.collectionName}}</h1>
-            <media-player src="{{ctrl.songData.previewUrl}}" ></media-player>
+        <div class="song-content">
+            <h2 class="content-title">{{ctrl.songData.collectionName}}</h2>
+            <h3 class="content-subtitle"><span ng-click="ctrl.findAuthor(ctrl.songData.artistName)">{{ctrl.songData.artistName}}</span></h3>
+            <media-player src="{{ctrl.songData.previewUrl}}" track-title="{{ctrl.songData.trackName}}"></media-player>
         </div>
     </div>
 </div>

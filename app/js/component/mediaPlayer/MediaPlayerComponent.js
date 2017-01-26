@@ -5,20 +5,24 @@
     function MediaPlayerController($scope, $element) {
         var ctrl = this,
             $wrap = $element[0],
-            $player = $wrap.getElementsByClassName('player')[0],
-            $volBtn = $wrap.getElementsByClassName('volume-control')[0],
-            $volPanel = $wrap.getElementsByClassName('volume-control-panel')[0],
-            $trackBtn = $wrap.getElementsByClassName('track-control')[0],
-            $trackPanel = $wrap.getElementsByClassName('track-control-panel')[0],
+            $player = $wrap.querySelector('.player'),
+            $volBtn = $wrap.querySelector('.volume-control'),
+            $volPanel = $wrap.querySelector('.volume-control-panel'),
+            $trackBtn = $wrap.querySelector('.track-control'),
+            $trackPanel = $wrap.querySelector('.track-control-panel'),
+            $trackPanelLine = $wrap.querySelector('.track-control-line'),
             volumePosition = 0,
             trackPosition = 0,
             trackPanelWidth,
+            trackPanelHeight,
             volumePanelWidth,
             volumeCoords,
             trackCoords,
             duration,
             volume,
-            currentPerc;
+            currentPerc,
+            buffCanvas,
+            buffCanvasCtx;
 
         ctrl.isPlaying = false;
         ctrl.currentTime = {
@@ -34,22 +38,24 @@
         ctrl.pause = pause;
 
         $player.addEventListener("loadedmetadata", function () {
+            setVolume();
             trackPanelWidth = $trackPanel.offsetWidth;
+            trackPanelHeight = $trackPanel.offsetHeight;
             volumePanelWidth = $volPanel.offsetWidth;
             volumeCoords = getCoords($volPanel);
             trackCoords = getCoords($trackPanel);
             volumeCoords.right = volumeCoords.left + volumePanelWidth;
             trackCoords.right = trackCoords.left + trackPanelWidth;
-
             duration = Math.round($player.duration);
             ctrl.totalTime.minutes = Math.floor(duration / 60);
             ctrl.totalTime.seconds = duration - ctrl.totalTime.minutes * 60;
             $volBtn.style.transform = 'translate(' + $player.volume * volumePanelWidth + 'px, 0px)';
-
             $scope.$apply();
+            addBufferedLine();
         });
 
         $player.addEventListener("timeupdate", function () {
+            buffCanvasUpdate(this.seekable.end(0));
             var curTime = Math.round($player.currentTime),
                 min,
                 sec;
@@ -59,6 +65,7 @@
             ctrl.currentTime.minutes = ('0' + min).slice(-2);
             ctrl.currentTime.seconds = ('0' + sec).slice(-2);
             $trackBtn.style.transform = "translate(" + Math.floor(currentPerc * trackPanelWidth) + "px , 0";
+            $trackPanelLine.style.width = Math.floor(currentPerc * trackPanelWidth) + "px";
             $scope.$apply();
         });
 
@@ -78,6 +85,31 @@
             });
         });
 
+        $trackPanel.addEventListener('click', function (e) {
+            timeDrag(e);
+        });
+
+        $volPanel.addEventListener('click', function (e) {
+            volumeDrag(e);
+        });
+
+        function addBufferedLine() {
+            buffCanvas = document.createElement('canvas');
+            buffCanvas.classList.add('track-control-buff-line');
+            buffCanvasCtx = buffCanvas.getContext('2d');
+            buffCanvas.width = trackPanelWidth;
+            buffCanvas.height = trackPanelHeight;
+            $trackPanel.appendChild(buffCanvas);
+        }
+
+        function buffCanvasUpdate(endTime) {
+            var x;
+            x = endTime * trackPanelWidth / duration;
+            buffCanvas.width = buffCanvas.width;
+            buffCanvasCtx.fillStyle="rgba(255, 255, 255, .2)";
+            buffCanvasCtx.fillRect(0, 0, x, trackPanelHeight);
+        }
+
         function timeDrag(e) {
             if (e.pageX - trackCoords.left < 0) {
                 trackPosition = 0;
@@ -88,6 +120,7 @@
             }
             $player.currentTime = duration * trackPosition / trackPanelWidth;
             $trackBtn.style.transform = 'translate(' + trackPosition + 'px, 0px)';
+            $trackPanelLine.style.width = trackPosition + 'px';
         }
 
         function volumeDrag(e) {
@@ -99,7 +132,15 @@
                 volumePosition = e.pageX - volumeCoords.left;
             }
             $player.volume = volumePosition / volumePanelWidth;
+            localStorage.setItem('volume', $player.volume);
             $volBtn.style.transform = 'translate(' + volumePosition + 'px, 0px)';
+        }
+
+        function setVolume() {
+            var savedVol = localStorage.getItem('volume');
+            if (!savedVol) savedVol = 1;
+            $player.volume = savedVol;
+            $volBtn.style.transform = 'translate(' + savedVol + 'px, 0px)';
         }
 
         function getCoords(elem) {
@@ -132,7 +173,8 @@
 
     app.component('mediaPlayer', {
         bindings: {
-            src: '@'
+            src: '@',
+            trackTitle: '@'
         },
         templateUrl: 'js/component/mediaPlayer/mediaPlayer.html',
         controller: MediaPlayerController,
