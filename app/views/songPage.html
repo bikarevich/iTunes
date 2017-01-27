@@ -10,9 +10,9 @@
             </p>
         </div>
         <div class="song-content">
-            <h2 class="content-title">{{ctrl.songData.collectionName}}</h2>
+            <h2 class="content-title"><span ng-click="ctrl.goToAlbum(ctrl.songData.collectionId)">{{ctrl.songData.collectionName}}</span></h2>
             <h3 class="content-subtitle"><span ng-click="ctrl.findAuthor(ctrl.songData.artistName)">{{ctrl.songData.artistName}}</span></h3>
-            <media-player src="{{ctrl.songData.previewUrl}}" track-title="{{ctrl.songData.trackName}}"></media-player>
+            <media-player src="{{ctrl.songData.previewUrl}}" track-title="{{ctrl.songData.trackName}}" track-number="{{ctrl.songData.trackNumber}}"></media-player>
         </div>
     </div>
 </div>

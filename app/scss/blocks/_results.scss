@@ -11,8 +11,12 @@
     }
   }
 
-  tr {
+  td {
     cursor: pointer;
+    min-width: 150px;
+  }
+
+  tr {
     transition: all ease $animation-time;
 
     &:nth-child(2n) {
@@ -22,5 +26,16 @@
     &:hover {
       background: rgba(0, 0, 0, 0.04);
     }
+
+    &:first-child {
+      background: transparent;
+      &:hover {
+        background: transparent;
+      }
+    }
   }
+}
+
+.results-search-btn {
+  cursor: pointer;
 }

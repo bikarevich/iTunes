@@ -58,6 +58,12 @@ app
                 controller: 'BookPageController',
                 controllerAs: 'ctrl'
             })
+            .state('album', {
+                url: "/album/:id",
+                templateUrl: './views/albumPage.html',
+                controller: 'AlbumPageController',
+                controllerAs: 'ctrl'
+            })
             .state('search', {
                 url: "/search",
                 templateUrl: './views/searchResultsPage.html',

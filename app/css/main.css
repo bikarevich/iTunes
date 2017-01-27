@@ -2756,6 +2756,8 @@ body {
     margin: 0;
     font-size: 36px;
     font-weight: normal; }
+    .song .content-title span {
+      cursor: pointer; }
   .song .content-subtitle {
     margin: 0 0 40px;
     color: #f82c32;
@@ -2792,13 +2794,22 @@ body {
     .results th img, .results td img {
       max-width: 100px;
       max-height: 100px; }
-  .results tr {
+  .results td {
     cursor: pointer;
+    min-width: 150px; }
+  .results tr {
     transition: all ease 0.5s; }
     .results tr:nth-child(2n) {
       background: rgba(0, 0, 0, 0.02); }
     .results tr:hover {
       background: rgba(0, 0, 0, 0.04); }
+    .results tr:first-child {
+      background: transparent; }
+      .results tr:first-child:hover {
+        background: transparent; }
+
+.results-search-btn {
+  cursor: pointer; }
 
 .media-player {
   padding: 0;
@@ -2810,7 +2821,8 @@ body {
   height: 30px;
   overflow: hidden;
   transition: all ease 0.5s;
-  position: relative; }
+  position: relative;
+  margin: 0 0 15px; }
   .media-player:hover {
     background: #f82c32;
     color: #fff; }
@@ -2994,3 +3006,16 @@ body {
   position: fixed;
   left: 0;
   top: 0; }
+
+.search-panel {
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+  padding: 0 0 0 15px; }
+  .search-panel .button,
+  .search-panel .field {
+    float: left;
+    height: 28px;
+    border: none;
+    outline: none;
+    background: transparent; }

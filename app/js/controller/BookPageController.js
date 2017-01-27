@@ -8,6 +8,7 @@ module.exports = function (BookPageService, $state, $sce) {
 
     function setBookData() {
         BookPageService.getBookData(id).then(function(response) {
+            console.log(response);
             ctrl.bookData = response.data.results[0];
             ctrl.bookData.description = $sce.trustAsHtml(ctrl.bookData.description);
             ctrl.bookData.largePreviewImgUrl = getLargePreviewImage();

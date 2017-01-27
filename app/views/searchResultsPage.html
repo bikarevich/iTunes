@@ -10,12 +10,13 @@
             </th>
             <th>
                 Type
+                <span class="results-search-btn" ng-click="ctrl.sortType()"><i class="fa fa-sort" aria-hidden="true"></i></span>
             </th>
             <th>
                 Collection
             </th>
         </tr>
-        <tr ng-repeat="item in ctrl.results" ng-click="ctrl.goToSongView(item.trackId)">
+        <tr ng-repeat="item in ctrl.results" ng-click="ctrl.goToItemView(item.trackId || item.collectionId, item.wrapperType)">
             <td>
                 <img ng-src="{{item.artworkUrl100}}">
             </td>
@@ -26,7 +27,7 @@
                 {{item.artistName}}
             </td>
             <td>
-                {{item.kind}}
+                {{item.wrapperType}}
             </td>
             <td>
                 {{item.collectionName}}

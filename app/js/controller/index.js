@@ -8,3 +8,4 @@ app.controller('SongPageController', require('./SongPageController.js'));
 app.controller('MovePageController', require('./MovePageController.js'));
 app.controller('BookPageController', require('./BookPageController.js'));
 app.controller('SearchResultsPageController', require('./SearchResultsPageController.js'));
+app.controller('AlbumPageController', require('./AlbumPageController.js'));

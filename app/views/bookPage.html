@@ -2,13 +2,13 @@
     <div class="song">
         <div class="left-col">
             <img ng-src="{{ctrl.bookData.largePreviewImgUrl}}">
-            <a class="buy-btn" ng-href="{{ctrl.bookData.trackViewUrl}}" target="_blank">{{ctrl.bookData.price}} {{ctrl.bookData.currency}}</a>
+            <a class="buy-btn" ng-href="{{ctrl.bookData.trackViewUrl || ctrl.bookData.collectionViewUrl}}" target="_blank">{{ctrl.bookData.price || ctrl.bookData.collectionPrice}} {{ctrl.bookData.currency}}</a>
             <p><strong>Author:</strong> {{ctrl.bookData.artistName}}</p>
-            <p><strong>Average User Rating:</strong> {{ctrl.bookData.averageUserRating}}</p>
+            <p ng-show="!!ctrl.bookData.averageUserRating"><strong>Average User Rating:</strong> {{ctrl.bookData.averageUserRating}}</p>
             <p ng-show="!!ctrl.bookData.contentAdvisoryRating"><strong>Content Advisory Rating:</strong> {{ctrl.bookData.contentAdvisoryRating}}</p>
         </div>
         <div class="song-content">
-            <h1 class="content-title">{{ctrl.bookData.trackName}}</h1>
+            <h1 class="content-title">{{ctrl.bookData.trackName || ctrl.bookData.collectionName}}</h1>
             <p ng-show="!!ctrl.bookData.description"><strong>Description:</strong></p>
             <p ng-bind-html="ctrl.bookData.description"></p>
         </div>

@@ -1,0 +1,15 @@
+.search-panel {
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+  padding: 0 0 0 15px;
+
+  .button,
+  .field {
+    float: left;
+    height: 28px;
+    border: none;
+    outline: none;
+    background: transparent;
+  }
+}

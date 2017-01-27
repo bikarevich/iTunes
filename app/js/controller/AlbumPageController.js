@@ -1,4 +1,4 @@
-module.exports = function (SongPageService, $state, $sce, $scope, SearchResultsPageService, SearchPanelService) {
+module.exports = function (AlbumPageService, $state, $sce, $scope, SearchResultsPageService, SearchPanelService) {
     var ctrl = this,
         id = $state.params.id,
         img = document.createElement('img'),
@@ -7,41 +7,42 @@ module.exports = function (SongPageService, $state, $sce, $scope, SearchResultsP
         body = document.getElementsByTagName('body')[0];
 
     img.crossOrigin = "Anonymous";
-    ctrl.songData = [];
+    ctrl.albumData = [];
+    ctrl.AlbumTracks = [];
 
     ctrl.findAuthor = findAuthor;
-    ctrl.goToAlbum = goToAlbum;
 
-    setSongData();
+    setAlbumData();
 
     $scope.$on("$destroy", function() {
         body.style.backgroundImage = '';
     });
 
-    function goToAlbum(id) {
-        $state.go('album', {id : id});
-    }
-
-    function setSongData() {
-        SongPageService.getSongData(id).then(function(response) {
-            ctrl.songData = response.data.results[0];
-            ctrl.songData.largePreviewImgUrl = getLargePreviewImage();
-            ctrl.songData.previewUrl = $sce.trustAsResourceUrl(ctrl.songData.previewUrl);
-            setSongPageBg(ctrl.songData.largePreviewImgUrl);
-            var date = new Date(ctrl.songData.releaseDate);
+    function setAlbumData() {
+        AlbumPageService.getAlbumData(id).then(function(response) {
+            ctrl.albumData = response.data.results[0];
+            ctrl.AlbumTracks = response.data.results;
+            ctrl.AlbumTracks.shift();
+            angular.forEach(ctrl.AlbumTracks, function (item) {
+                item.previewSceUrl = $sce.trustAsResourceUrl(item.previewUrl);
+            });
+            ctrl.albumData.largePreviewImgUrl = getLargePreviewImage();
+            ctrl.albumData.previewUrl = $sce.trustAsResourceUrl(ctrl.albumData.previewUrl);
+            setAlbumPageBg(ctrl.albumData.largePreviewImgUrl);
+            var date = new Date(ctrl.albumData.releaseDate);
             var newDate = date.getFullYear() + '.' + ('0' + (date.getMonth()+1)).slice(-2) + '.' + ('0' + date.getDate()).slice(-2);
-            ctrl.songData.releaseDate = newDate;
-            if(ctrl.songData.trackPrice < 0) {
-                ctrl.songData.trackPrice = 0
+            ctrl.albumData.releaseDate = newDate;
+            if(ctrl.albumData.trackPrice < 0) {
+                ctrl.albumData.trackPrice = 0
             }
         })
     }
 
     function getLargePreviewImage () {
-        return ctrl.songData.artworkUrl100.replace('100x100bb', '1000x1000bb');
+        return ctrl.albumData.artworkUrl100.replace('100x100bb', '1000x1000bb');
     }
 
-    function setSongPageBg(url) {
+    function setAlbumPageBg(url) {
         var width = window.innerWidth,
             height = window.innerHeight,
             k = width/height,

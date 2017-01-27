@@ -37,6 +37,10 @@
         ctrl.play = play;
         ctrl.pause = pause;
 
+        $player.addEventListener('pause', function () {
+            ctrl.isPlaying = false;
+        });
+
         $player.addEventListener("loadedmetadata", function () {
             setVolume();
             trackPanelWidth = $trackPanel.offsetWidth;
@@ -49,6 +53,8 @@
             duration = Math.round($player.duration);
             ctrl.totalTime.minutes = Math.floor(duration / 60);
             ctrl.totalTime.seconds = duration - ctrl.totalTime.minutes * 60;
+            ctrl.totalTime.minutes = ('0' + ctrl.totalTime.minutes).slice(-2);
+            ctrl.totalTime.seconds = ('0' + ctrl.totalTime.seconds).slice(-2);
             $volBtn.style.transform = 'translate(' + $player.volume * volumePanelWidth + 'px, 0px)';
             $scope.$apply();
             addBufferedLine();
@@ -161,6 +167,14 @@
         }
 
         function play() {
+            var video = document.getElementsByTagName('video');
+            var audio = document.getElementsByTagName('audio');
+            angular.forEach(audio, function (item) {
+                item.pause();
+            });
+            angular.forEach(video, function (item) {
+                item.pause();
+            });
             $player.play();
             ctrl.isPlaying = true;
         }
@@ -174,7 +188,8 @@
     app.component('mediaPlayer', {
         bindings: {
             src: '@',
-            trackTitle: '@'
+            trackTitle: '@',
+            trackNumber: '@'
         },
         templateUrl: 'js/component/mediaPlayer/mediaPlayer.html',
         controller: MediaPlayerController,
