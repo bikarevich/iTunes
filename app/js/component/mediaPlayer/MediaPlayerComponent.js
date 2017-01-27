@@ -41,7 +41,7 @@
             ctrl.isPlaying = false;
         });
 
-        $player.addEventListener("play", function () {
+        $player.addEventListener("loadedmetadata", function () {
             setVolume();
             trackPanelWidth = $trackPanel.offsetWidth;
             trackPanelHeight = $trackPanel.offsetHeight;
