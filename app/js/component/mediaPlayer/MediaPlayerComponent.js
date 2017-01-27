@@ -41,7 +41,7 @@
             ctrl.isPlaying = false;
         });
 
-        $player.addEventListener("loadedmetadata", function () {
+        $player.addEventListener("play", function () {
             setVolume();
             trackPanelWidth = $trackPanel.offsetWidth;
             trackPanelHeight = $trackPanel.offsetHeight;
@@ -62,17 +62,11 @@
 
         $player.addEventListener("timeupdate", function () {
             buffCanvasUpdate(this.seekable.end(0));
-            var curTime = Math.round($player.currentTime),
-                min,
-                sec;
+            var curTime = $player.currentTime, a;
             currentPerc = curTime / duration;
-            min = Math.floor(curTime / 60);
-            sec = curTime - min * 60;
-            ctrl.currentTime.minutes = ('0' + min).slice(-2);
-            ctrl.currentTime.seconds = ('0' + sec).slice(-2);
-            $trackBtn.style.transform = "translate(" + Math.floor(currentPerc * trackPanelWidth) + "px , 0";
-            $trackPanelLine.style.width = Math.floor(currentPerc * trackPanelWidth) + "px";
-            $scope.$apply();
+            a = Math.floor(currentPerc * trackPanelWidth);
+            $trackBtn.style.transform = "translate(" + a + "px , 0";
+            $trackPanelLine.style.width = a + "px";
         });
 
         $trackBtn.addEventListener('mousedown', function () {
@@ -112,7 +106,7 @@
             var x;
             x = endTime * trackPanelWidth / duration;
             buffCanvas.width = buffCanvas.width;
-            buffCanvasCtx.fillStyle="rgba(255, 255, 255, .2)";
+            buffCanvasCtx.fillStyle = "rgba(255, 255, 255, .2)";
             buffCanvasCtx.fillRect(0, 0, x, trackPanelHeight);
         }
 
@@ -167,15 +161,13 @@
         }
 
         function play() {
-            var video = document.getElementsByTagName('video');
             var audio = document.getElementsByTagName('audio');
             angular.forEach(audio, function (item) {
                 item.pause();
             });
-            angular.forEach(video, function (item) {
-                item.pause();
-            });
-            $player.play();
+            setTimeout(function () {
+                $player.play();
+            }, 350);
             ctrl.isPlaying = true;
         }
 
