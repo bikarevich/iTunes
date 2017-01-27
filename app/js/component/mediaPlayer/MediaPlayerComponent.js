@@ -167,7 +167,7 @@
             });
             setTimeout(function () {
                 $player.play();
-            }, 350);
+            }, 500);
             ctrl.isPlaying = true;
         }
 
