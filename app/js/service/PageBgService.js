@@ -36,10 +36,9 @@ module.exports = function () {
             }
 
             img.addEventListener('load', function handler() {
-                ctx.drawImage(img, -(imgWidth - width) / 2, -(imgHeight - height) / 2, imgWidth, imgHeight);
                 ctx.filter = 'blur(35px)';
-                ctx.drawImage(img, -(imgWidth - width) / 2, -(imgHeight - height) / 2, imgWidth, imgHeight);
-                ctx.fillStyle = 'rgba(0, 0, 0, .4)';
+                ctx.drawImage(img, -(imgWidth*1.4 - width) / 2, -(imgHeight*1.4 - height) / 2, imgWidth*1.4, imgHeight*1.4);
+                ctx.globalAlpha = 0.4;
                 ctx.fillRect(0, 0, width, height);
                 data = ctx.getImageData(0, 0, imgWidth, imgHeight);
                 length = data.data.length;
