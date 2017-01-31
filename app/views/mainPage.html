@@ -4,7 +4,7 @@
         Top Songs
     </h2>
     <div class="music-previews">
-        <div class="item" ng-repeat="item in ctrl.topSongs" ng-click="ctrl.goToSongView(item.id.attributes['im:id'])">
+        <div class="item" ng-repeat="item in ctrl.topSongs" ng-click="ctrl.goToAlbumView(item.collectionId)">
             <div class="title">
                 <span class="artist">{{item['im:artist'].label}}</span>
                 <span class="name">{{item['im:name'].label}}</span>

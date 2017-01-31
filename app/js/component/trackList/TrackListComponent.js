@@ -14,7 +14,7 @@
             if(ctrl.trackList.length > 0) {
                 ctrl.AlbumTracks = JSON.parse(ctrl.trackList);
                 if(ctrl.AlbumTracks.length > 0) {
-                    angular.forEach(ctrl.AlbumTracks, function (item) {
+                    ctrl.AlbumTracks.forEach(function (item) {
                         var duration;
                         item.previewSceUrl = $sce.trustAsResourceUrl(item.previewUrl);
                         item.totalTime = {};
@@ -30,7 +30,7 @@
         };
 
         function playTrack(data) {
-            angular.forEach(ctrl.AlbumTracks, function (item) {
+            ctrl.AlbumTracks.forEach(function (item) {
                 item.isPlaying = false;
             });
             data.isPlaying = true;
@@ -38,7 +38,7 @@
         }
 
         function stopPlayer() {
-            angular.forEach(ctrl.AlbumTracks, function (item) {
+            ctrl.AlbumTracks.forEach(function (item) {
                 item.isPlaying = false;
             });
             ctrl.currentTrack = null;

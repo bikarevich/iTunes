@@ -1,4 +1,4 @@
-module.exports = function (MovePageService, PageBgService, $state, $sce, $scope) {
+module.exports = function (MovePageService, PageBgService, $state, $sce, $scope, CheckLoaderService) {
     var ctrl = this,
         id = $state.params.id,
         img = document.createElement('img'),
@@ -28,6 +28,7 @@ module.exports = function (MovePageService, PageBgService, $state, $sce, $scope)
                 } else {
                     document.querySelector('.songColorWrap').classList.remove('white');
                 }
+                CheckLoaderService.disableLoader();
             });
         })
     }

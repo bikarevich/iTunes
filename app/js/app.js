@@ -5,7 +5,6 @@ var app = angular.module('App', [
     'ui.router'
 ]);
 
-require('./factory/index');
 require('./controller/index');
 require('./service/index');
 require('./directive/index');
@@ -14,7 +13,9 @@ require('./component/index');
 app
     .config(function ($stateProvider, $urlRouterProvider, $compileProvider) {
         $urlRouterProvider.otherwise("/index");
+
         $compileProvider.preAssignBindingsEnabled(true);
+
         $stateProvider
             .state('index', {
                 url: "/index",
@@ -69,5 +70,13 @@ app
                 templateUrl: './views/searchResultsPage.html',
                 controller: 'SearchResultsPageController',
                 controllerAs: 'ctrl'
-            })
+            });
+
+    })
+    .run(function ($rootScope) {
+        $rootScope.showLoader = true;
+
+        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options){
+            $rootScope.showLoader = true;
+        });
     });

@@ -1,4 +1,4 @@
-module.exports = function (SearchResultsPageService, $rootScope, $scope, $state) {
+module.exports = function (SearchResultsPageService, $rootScope, $scope, $state, CheckLoaderService) {
     var ctrl = this;
         ctrl.isSorted = false;
     ctrl.goToItemView = goToItemView;
@@ -36,6 +36,7 @@ module.exports = function (SearchResultsPageService, $rootScope, $scope, $state)
 
     $scope.updateSearchResults = function() {
         ctrl.results = SearchResultsPageService.getResults();
+        CheckLoaderService.disableLoader();
     };
 
     $scope.updateSearchResults();

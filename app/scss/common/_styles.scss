@@ -4,7 +4,15 @@ body {
   position: relative;
   background-position: center;
   background-size: cover;
+}
 
+.overflow {
+  overflow: hidden;
+  height: 100vh;
+
+  .loader-wrapper {
+    visibility: visible;
+  }
 }
 
 * {

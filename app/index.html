@@ -8,41 +8,47 @@
 </head>
 
 <body>
-<div ng-app="App">
-    <div class="header-wrap">
-        <div class="content">
-            <header class="header">
-                <a ui-sref="index" class="logo"></a>
-                <nav class="nav">
-                    <a ui-sref="index">Home</a>
-                    <a ui-sref="music">Music</a>
-                    <a ui-sref="moves">Moves</a>
-                    <a ui-sref="books">Books</a>
-                </nav>
-                <search-panel></search-panel>
-            </header>
+    <div ng-class="{'overflow' : showLoader}" ng-app="App">
+        <div class="header-wrap">
+            <div class="content">
+                <header class="header">
+                    <a ui-sref="index" class="logo"></a>
+                    <nav class="nav">
+                        <a ui-sref="index">Home</a>
+                        <a ui-sref="music">Music</a>
+                        <a ui-sref="moves">Moves</a>
+                        <a ui-sref="books">Books</a>
+                    </nav>
+                    <search-panel></search-panel>
+                </header>
+            </div>
         </div>
+
+        <div class="page-content">
+            <div ui-view></div>
+        </div>
+
+        <footer class="footer">
+            <div class="content">
+                <a href="https://www.apple.com/mac/" target="_blank">MAC</a>
+                <a href="https://www.apple.com/ipad/" target="_blank">iPad</a>
+                <a href="https://www.apple.com/iphone/" target="_blank">iPhone</a>
+                <a href="https://www.apple.com/watch/" target="_blank">Watch</a>
+                <a href="https://www.apple.com/tv/" target="_blank">TV</a>
+                <a href="https://www.apple.com/music/" target="_blank">Muisc</a>
+                <a href="https://support.apple.com/" target="_blank">Support</a>
+            </div>
+        </footer>
+
+        <div class="loader-wrapper">
+            <div>
+                <div class="loader"></div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="page-content">
-        <div ui-view></div>
-    </div>
-
-    <footer class="footer">
-        <div class="content">
-            <a href="https://www.apple.com/mac/" target="_blank">MAC</a>
-            <a href="https://www.apple.com/ipad/" target="_blank">iPad</a>
-            <a href="https://www.apple.com/iphone/" target="_blank">iPhone</a>
-            <a href="https://www.apple.com/watch/" target="_blank">Watch</a>
-            <a href="https://www.apple.com/tv/" target="_blank">TV</a>
-            <a href="https://www.apple.com/music/" target="_blank">Muisc</a>
-            <a href="https://support.apple.com/" target="_blank">Support</a>
-        </div>
-    </footer>
-
-</div>
-
-<script src="dist/app.js" type="text/javascript"></script>
+    <script src="dist/app.js" type="text/javascript"></script>
 
 </body>
 </html>

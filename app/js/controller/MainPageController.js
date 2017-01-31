@@ -1,4 +1,4 @@
-module.exports = function (MainPageService, $state, $sce) {
+module.exports = function (MainPageService, $state, $sce, CheckLoaderService) {
     var ctrl = this;
 
     ctrl.topSongs = [];
@@ -12,6 +12,7 @@ module.exports = function (MainPageService, $state, $sce) {
     ctrl.goToSongView = goToSongView;
     ctrl.goToMoveView = goToMoveView;
     ctrl.goToBookView = goToBookView;
+    ctrl.goToAlbumView = goToAlbumView;
 
     function setTopMoves() {
         MainPageService.getTopMoves().then(function (response) {
@@ -34,7 +35,16 @@ module.exports = function (MainPageService, $state, $sce) {
     function setTopSongs() {
         MainPageService.getTopSongs().then(function (response) {
             ctrl.topSongs = response.data.feed.entry;
+            ctrl.topSongs.forEach(function (item) {
+                var href = item['im:collection'].link.attributes.href;
+                item.collectionId = href.substring(href.lastIndexOf("/")+3,href.lastIndexOf("?"));
+            });
+            CheckLoaderService.disableLoader();
         });
+    }
+
+    function goToAlbumView(id) {
+        $state.go('album', {id: id});
     }
 
     function goToSongView(id) {

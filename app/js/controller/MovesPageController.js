@@ -1,4 +1,4 @@
-module.exports = function (MovesPageService, $state, $sce) {
+module.exports = function (MovesPageService, $state, $sce, CheckLoaderService) {
     var ctrl = this;
 
     ctrl.topVideoRentals = [];
@@ -15,6 +15,7 @@ module.exports = function (MovesPageService, $state, $sce) {
             angular.forEach(ctrl.topMoves, function(item, key) {
                 item.summary.label = $sce.trustAsHtml(item.summary.label);
             });
+            CheckLoaderService.disableLoader();
         });
     }
 

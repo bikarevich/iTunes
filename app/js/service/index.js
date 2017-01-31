@@ -12,3 +12,4 @@ app.service('SearchPanelService', require('./SearchPanelService.js'));
 app.service('SearchResultsPageService', require('./SearchResultsPageService.js'));
 app.service('AlbumPageService', require('./AlbumPageService.js'));
 app.service('PageBgService', require('./PageBgService.js'));
+app.service('CheckLoaderService', require('./CheckLoaderService.js'));

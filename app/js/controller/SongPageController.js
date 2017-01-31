@@ -1,4 +1,4 @@
-module.exports = function (SongPageService, $state, $sce, $scope, SearchResultsPageService, SearchPanelService, PageBgService) {
+module.exports = function (SongPageService, $state, $sce, $scope, SearchResultsPageService, SearchPanelService, PageBgService, CheckLoaderService) {
     var ctrl = this,
         id = $state.params.id,
         body = document.querySelector('body');
@@ -38,6 +38,7 @@ module.exports = function (SongPageService, $state, $sce, $scope, SearchResultsP
                 } else {
                     document.querySelector('.songColorWrap').classList.remove('white');
                 }
+                CheckLoaderService.disableLoader();
             });
         })
     }

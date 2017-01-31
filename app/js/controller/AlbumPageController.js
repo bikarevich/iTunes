@@ -1,4 +1,4 @@
-module.exports = function (AlbumPageService, $state, $sce, $scope, SearchResultsPageService, SearchPanelService, PageBgService) {
+module.exports = function (AlbumPageService, $state, $sce, $scope, SearchResultsPageService, SearchPanelService, PageBgService, CheckLoaderService) {
     var ctrl = this,
         id = $state.params.id,
         body = document.querySelector('body');
@@ -35,10 +35,10 @@ module.exports = function (AlbumPageService, $state, $sce, $scope, SearchResults
                 } else {
                     document.querySelector('.songColorWrap').classList.remove('white');
                 }
+                CheckLoaderService.disableLoader();
             });
         })
     }
-
 
     function getLargePreviewImage () {
         return ctrl.albumData.artworkUrl100.replace('100x100bb', '1000x1000bb');
