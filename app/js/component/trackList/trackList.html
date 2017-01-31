@@ -1,0 +1,26 @@
+<div ng-repeat="item in ctrl.AlbumTracks" ng-show="item.previewUrl">
+    <div class="media-player" ng-class="{'open' : item.isPlaying}">
+        <div class="panels">
+            <div class="left">
+                <button class="button play" ng-click="ctrl.playTrack(item)">
+                    <i class="fa fa-play" aria-hidden="true"></i>
+                </button>
+                <span class="song-number">{{item.trackNumber}}</span>
+            </div>
+            <div class="content">
+                <span class="content-text">{{item.trackName}}</span>
+            </div>
+            <div class="right">
+                <span class="content-text">{{item.totalTime.minutes}}:{{item.totalTime.seconds}}</span>
+            </div>
+        </div>
+        <div class="panels bottom">
+            <media-player
+                    src="{{item.previewSceUrl}}"
+                    playing="{{item.isPlaying}}"
+                    ng-if="ctrl.currentTrack === item"
+                    callback="ctrl.stopPlayer()">
+            </media-player>
+        </div>
+    </div>
+</div>

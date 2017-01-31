@@ -12,9 +12,7 @@
         <div class="song-content">
             <h2 class="content-title">{{ctrl.albumData.collectionName}}</h2>
             <h3 class="content-subtitle"><span ng-click="ctrl.findAuthor(ctrl.albumData.artistName)">{{ctrl.albumData.artistName}}</span></h3>
-            <div ng-repeat="item in ctrl.AlbumTracks" ng-show="item.previewUrl">
-                <media-player src="{{item.previewSceUrl}}" track-title="{{item.trackName}}" track-number="{{item.trackNumber}}"></media-player>
-            </div>
+            <track-list track-list="{{ctrl.AlbumTracks}}"></track-list>
         </div>
     </div>
 </div>

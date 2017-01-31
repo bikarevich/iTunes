@@ -5,11 +5,11 @@ var app = angular.module('App', [
     'ui.router'
 ]);
 
+require('./factory/index');
 require('./controller/index');
 require('./service/index');
 require('./directive/index');
 require('./component/index');
-require('./component/mediaPlayer/MediaPlayerComponent');
 
 app
     .config(function ($stateProvider, $urlRouterProvider, $compileProvider) {

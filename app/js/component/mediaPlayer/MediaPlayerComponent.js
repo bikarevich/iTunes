@@ -24,7 +24,6 @@
             buffCanvas,
             buffCanvasCtx;
 
-        ctrl.isPlaying = false;
         ctrl.currentTime = {
             minutes: '00',
             seconds: '00'
@@ -36,10 +35,6 @@
 
         ctrl.play = play;
         ctrl.pause = pause;
-
-        $player.addEventListener('pause', function () {
-            ctrl.isPlaying = false;
-        });
 
         $player.addEventListener("loadedmetadata", function () {
             setVolume();
@@ -56,8 +51,12 @@
             ctrl.totalTime.minutes = ('0' + ctrl.totalTime.minutes).slice(-2);
             ctrl.totalTime.seconds = ('0' + ctrl.totalTime.seconds).slice(-2);
             $volBtn.style.transform = 'translate(' + $player.volume * volumePanelWidth + 'px, 0px)';
-            $scope.$apply();
             addBufferedLine();
+            $scope.$apply();
+
+            if(ctrl.playing) {
+                $player.play();
+            }
         });
 
         $player.addEventListener("timeupdate", function () {
@@ -161,27 +160,21 @@
         }
 
         function play() {
-            var audio = document.getElementsByTagName('audio');
-            angular.forEach(audio, function (item) {
-                item.pause();
-            });
-            setTimeout(function () {
-                $player.play();
-            }, 500);
-            ctrl.isPlaying = true;
+            $player.play();
         }
 
         function pause() {
             $player.pause();
-            ctrl.isPlaying = false;
+            ctrl.playing = false;
+            ctrl.callback();
         }
     }
 
     app.component('mediaPlayer', {
         bindings: {
             src: '@',
-            trackTitle: '@',
-            trackNumber: '@'
+            playing: '@',
+            callback: '&'
         },
         templateUrl: 'js/component/mediaPlayer/mediaPlayer.html',
         controller: MediaPlayerController,
