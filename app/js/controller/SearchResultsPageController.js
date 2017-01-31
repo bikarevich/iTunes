@@ -4,16 +4,33 @@ module.exports = function (SearchResultsPageService, $rootScope, $scope, $state,
     ctrl.goToItemView = goToItemView;
     ctrl.sortType = sortType;
 
-    function goToItemView(id, type) {
-        switch (type) {
-            case 'track' :
-                $state.go('song', {id: id});
-                break;
-            case 'audiobook' :
-                $state.go('book', {id: id});
-                break;
-            default :
-                $state.go('move', {id: id});
+    function goToItemView(trackId, collectionId, linkType, wrapperType) {
+        if (wrapperType && wrapperType === 'track') {
+            switch (linkType) {
+                case 'track' :
+                    $state.go('song', {id: trackId});
+                    break;
+                case 'collection' :
+                    $state.go('album', {id: collectionId});
+                    break;
+            }
+        } else {
+            switch (wrapperType) {
+                case 'track' :
+                    $state.go('song', {id: trackId || collectionId});
+                    break;
+                case 'album' :
+                    $state.go('album', {id: trackId || collectionId});
+                    break;
+                case 'audiobook' :
+                    $state.go('book', {id: trackId || collectionId});
+                    break;
+                case 'book' :
+                    $state.go('book', {id: trackId || collectionId});
+                    break;
+                default :
+                    $state.go('move', {id: trackId || collectionId});
+            }
         }
     }
     

@@ -2,7 +2,12 @@
     <div class="song songColorWrap">
         <div class="left-col">
             <img ng-src="{{ctrl.albumData.largePreviewImgUrl}}">
-            <a class="buy-btn" ng-href="{{ctrl.albumData.trackViewUrl}}" target="_blank">{{ctrl.albumData.collectionPrice}} {{ctrl.albumData.currency}}</a>
+            <a class="buy-btn" ng-href="{{ctrl.albumData.collectionViewUrl}}" target="_blank">
+                <span ng-show="ctrl.albumData.collectionPrice">
+                    {{ctrl.albumData.collectionPrice}} {{ctrl.albumData.currency}}
+                </span>
+                <span ng-show="ctrl.albumData.preorder"> Pre-Order</span>
+            </a>
             <p>
                 <strong>Style:</strong> {{ctrl.albumData.primaryGenreName}}<br>
                 <strong>Release Date:</strong> {{ctrl.albumData.releaseDate}}<br>

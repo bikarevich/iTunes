@@ -10,18 +10,23 @@
             </th>
             <th>
                 Type
-                <span class="results-search-btn" ng-click="ctrl.sortType()"><i class="fa fa-sort" aria-hidden="true"></i></span>
+                <span class="results-search-btn" ng-click="ctrl.sortType()"><i class="fa fa-sort"
+                                                                               aria-hidden="true"></i></span>
             </th>
             <th>
                 Collection
             </th>
         </tr>
-        <tr ng-repeat="item in ctrl.results" ng-click="ctrl.goToItemView(item.trackId || item.collectionId, item.wrapperType)">
+        <tr ng-repeat="item in ctrl.results">
             <td>
-                <img ng-src="{{item.artworkUrl100}}">
+                <span class="results-link" ng-click="ctrl.goToItemView(item.trackId, item.collectionId, 'track', item.wrapperType)">
+                     <img ng-src="{{item.artworkUrl100}}">
+                </span>
             </td>
             <td>
-                {{item.trackName}}
+                <span class="results-link" ng-click="ctrl.goToItemView(item.trackId, item.collectionId, 'track', item.wrapperType)">
+                    {{item.trackName}}
+                </span>
             </td>
             <td>
                 {{item.artistName}}
@@ -30,7 +35,9 @@
                 {{item.wrapperType}}
             </td>
             <td>
-                {{item.collectionName}}
+                 <span class="results-link" ng-click="ctrl.goToItemView(item.trackId, item.collectionId, 'collection', item.wrapperType)">
+                    {{item.collectionName}}
+                 </span>
             </td>
         </tr>
     </table>

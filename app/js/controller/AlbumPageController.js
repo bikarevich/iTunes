@@ -7,47 +7,62 @@ module.exports = function (AlbumPageService, $state, $sce, $scope, SearchResults
     ctrl.AlbumTracks = [];
     ctrl.currentTrack = null;
 
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
     ctrl.findAuthor = findAuthor;
 
     setAlbumData();
 
-    $scope.$on("$destroy", function() {
+    $scope.$on("$destroy", function () {
         body.style.backgroundImage = '';
     });
 
     function setAlbumData() {
-        AlbumPageService.getAlbumData(id).then(function(response) {
-            ctrl.albumData = response.data.results[0];
+        AlbumPageService.getAlbumData(id).then(function (response) {
             ctrl.AlbumTracks = response.data.results;
-            ctrl.AlbumTracks.shift();
-            ctrl.albumData.largePreviewImgUrl = getLargePreviewImage();
-            ctrl.albumData.previewUrl = $sce.trustAsResourceUrl(ctrl.albumData.previewUrl);
-            var date = new Date(ctrl.albumData.releaseDate);
-            var newDate = date.getFullYear() + '.' + ('0' + (date.getMonth()+1)).slice(-2) + '.' + ('0' + date.getDate()).slice(-2);
-            ctrl.albumData.releaseDate = newDate;
-            if(ctrl.albumData.trackPrice < 0) {
-                ctrl.albumData.trackPrice = 0
-            }
-            PageBgService.getBase64Img(ctrl.albumData.largePreviewImgUrl).then(function(response) {
-                body.style.backgroundImage = 'url(' + response.url  + ')';
-                if(response.luma) {
-                    document.querySelector('.songColorWrap').classList.add('white');
-                } else {
-                    document.querySelector('.songColorWrap').classList.remove('white');
+            if (ctrl.AlbumTracks && ctrl.AlbumTracks.length > 0) {
+                ctrl.albumData = response.data.results[0];
+                ctrl.AlbumTracks.shift();
+                if (ctrl.albumData.artistName === 'Various Artists') {
+                    ctrl.AlbumTracks.forEach(function (item) {
+                        item.trackName = item.trackName + '. ' + item.artistName;
+                    })
                 }
-                CheckLoaderService.disableLoader();
-            });
-        })
+                ctrl.albumData.largePreviewImgUrl = getLargePreviewImage();
+                ctrl.albumData.previewUrl = $sce.trustAsResourceUrl(ctrl.albumData.previewUrl);
+                var date = new Date(ctrl.albumData.releaseDate);
+                var nowDate = new Date();
+                if (date > nowDate) {
+                    ctrl.albumData.preorder = true;
+                }
+                var newDate = ('0' + date.getDate()).slice(-2) + ' ' + months[date.getMonth()] + ', ' + date.getFullYear();
+                ctrl.albumData.releaseDate = newDate;
+                if (ctrl.albumData.trackPrice < 0) {
+                    ctrl.albumData.trackPrice = 0
+                }
+                PageBgService.getBase64Img(ctrl.albumData.largePreviewImgUrl).then(function (response) {
+                    body.style.backgroundImage = 'url(' + response.url + ')';
+                    if (response.luma) {
+                        document.querySelector('.songColorWrap').classList.add('white');
+                    } else {
+                        document.querySelector('.songColorWrap').classList.remove('white');
+                    }
+                    CheckLoaderService.disableLoader();
+                });
+            } else {
+                $state.go('index');
+            }
+        });
     }
 
-    function getLargePreviewImage () {
+    function getLargePreviewImage() {
         return ctrl.albumData.artworkUrl100.replace('100x100bb', '1000x1000bb');
     }
 
     function findAuthor(name) {
-        SearchPanelService.getSearchResults({term : name, limit : 25, media : 'music'}).then(function (response) {
+        SearchPanelService.getSearchResults({term: name, limit: 25, media: 'music'}).then(function (response) {
             SearchResultsPageService.setResults(response.data.results);
-            if($state.current.name != 'search') {
+            if ($state.current.name != 'search') {
                 $state.go('search');
             } else {
                 $rootScope.$emit("CallUpdateSearchResults", {});
