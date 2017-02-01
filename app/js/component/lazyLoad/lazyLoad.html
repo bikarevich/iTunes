@@ -1,0 +1,45 @@
+<table class="results" ng-show="ctrl.visibleItems.length > 0">
+    <tr>
+        <th><!----></th>
+        <th>Title</th>
+        <th>
+            Author
+        </th>
+        <th>
+            Type
+            <span class="results-search-btn" ng-click="ctrl.sortType()"><i class="fa fa-sort"
+                                                                           aria-hidden="true"></i></span>
+        </th>
+        <th>
+            Collection
+        </th>
+    </tr>
+    <tr ng-repeat="item in ctrl.visibleItems track by $index" repeat-end="ctrl.onListReady()">
+        <td>
+            <span class="results-link"
+                  ng-click="ctrl.goToItemView(item.trackId, item.collectionId, 'track', item.wrapperType)">
+                 <img ng-src="{{item.artworkUrl100}}">
+            </span>
+        </td>
+        <td>
+            <span class="results-link"
+                  ng-click="ctrl.goToItemView(item.trackId, item.collectionId, 'track', item.wrapperType)">
+                {{item.trackName}}
+            </span>
+        </td>
+        <td>
+            {{item.artistName}}
+        </td>
+        <td>
+            {{item.wrapperType}}
+        </td>
+        <td>
+         <span class="results-link"
+               ng-click="ctrl.goToItemView(item.trackId, item.collectionId, 'collection', item.wrapperType)">
+            {{item.collectionName}}
+         </span>
+        </td>
+    </tr>
+</table>
+
+<scroll-top-btn></scroll-top-btn>

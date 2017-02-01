@@ -1,0 +1,28 @@
+.scroll-top-btn {
+  position: fixed;
+  z-index: 999;
+  right: 20px;
+  bottom: 90px;
+  opacity: 0;
+  transition: all ease $animation-time;
+  padding: 0;
+  font-size: 36px;
+  line-height: 0;
+  width: 36px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-weight: 100;
+  visibility: hidden;
+
+  &.visible {
+    opacity: .2;
+    visibility: visible;
+  }
+
+  &:hover {
+    opacity: .8;
+  }
+}

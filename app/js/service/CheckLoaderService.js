@@ -5,4 +5,11 @@ module.exports = function ($rootScope) {
             $rootScope.$apply();
         }
     };
+
+    this.enableLoader = function () {
+        $rootScope.showLoader = true;
+        if (!$rootScope.$$phase) {
+            $rootScope.$apply();
+        }
+    };
 };

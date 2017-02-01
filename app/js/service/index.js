@@ -13,3 +13,4 @@ app.service('SearchResultsPageService', require('./SearchResultsPageService.js')
 app.service('AlbumPageService', require('./AlbumPageService.js'));
 app.service('PageBgService', require('./PageBgService.js'));
 app.service('CheckLoaderService', require('./CheckLoaderService.js'));
+app.service('LazyLoadService', require('./LazyLoadService.js'));
