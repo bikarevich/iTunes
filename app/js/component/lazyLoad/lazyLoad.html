@@ -1,10 +1,7 @@
 <table class="results" ng-show="ctrl.visibleItems.length > 0">
     <tr>
         <th><!----></th>
-        <th>Title</th>
-        <th>
-            Author
-        </th>
+        <th>Title/Author</th>
         <th>
             Type
             <span class="results-search-btn" ng-click="ctrl.sortType()"><i class="fa fa-sort"
@@ -24,20 +21,21 @@
         <td>
             <span class="results-link"
                   ng-click="ctrl.goToItemView(item.trackId, item.collectionId, 'track', item.wrapperType)">
-                {{item.trackName}}
+                <strong>{{item.trackName}}</strong><br>
+                {{item.artistName}}
             </span>
-        </td>
-        <td>
-            {{item.artistName}}
         </td>
         <td>
             {{item.wrapperType}}
         </td>
         <td>
-         <span class="results-link"
+            <span class="results-link"
                ng-click="ctrl.goToItemView(item.trackId, item.collectionId, 'collection', item.wrapperType)">
             {{item.collectionName}}
-         </span>
+            </span>
+        </td>
+        <td>
+            <a class="results-buy" ng-href="{{item.trackViewUrl}}"><span ng-if="item.trackPrice <= 0">FREE</span> <span ng-if="item.trackPrice > 0">{{item.trackPrice}} $</span></a>
         </td>
     </tr>
 </table>

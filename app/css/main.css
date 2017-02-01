@@ -2799,7 +2799,8 @@ body {
     text-align: left; }
     .results th img, .results td img {
       max-width: 100px;
-      max-height: 100px; }
+      max-height: 100px;
+      transition: all ease 0.5s; }
   .results td {
     min-width: 150px; }
   .results tr {
@@ -2808,10 +2809,33 @@ body {
       background: rgba(0, 0, 0, 0.02); }
     .results tr:hover {
       background: rgba(0, 0, 0, 0.04); }
+      .results tr:hover img {
+        -webkit-transform: scale(1.1);
+            -ms-transform: scale(1.1);
+                transform: scale(1.1); }
     .results tr:first-child {
       background: transparent; }
       .results tr:first-child:hover {
         background: transparent; }
+
+.results-buy {
+  display: block;
+  background: #f82c32;
+  border: none;
+  border-radius: 0;
+  font-size: 16px;
+  color: #fff;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 38px;
+  text-decoration: none;
+  transition: all ease 0.5s; }
+  .results-buy:hover {
+    background: #f82c32;
+    border: none;
+    -webkit-transform: scale(1.1);
+        -ms-transform: scale(1.1);
+            transform: scale(1.1); }
 
 .results-link {
   cursor: pointer; }
