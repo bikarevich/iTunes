@@ -50,8 +50,8 @@ module.exports = function (SongPageService, $state, $sce, $scope, SearchResultsP
     }
 
     function findAuthor(name) {
-        SearchPanelService.getSearchResults({term: name, limit: 25, media: 'music'}).then(function (response) {
-            SearchResultsPageService.setResults(response.data.results);
+        SearchPanelService.getSearchResults({term: name, limit: 200, media: 'music'}).then(function (response) {
+            SearchResultsPageService.setResults(response.data);
             if ($state.current.name != 'search') {
                 $state.go('search');
             } else {
