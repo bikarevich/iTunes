@@ -2,171 +2,168 @@
 
     'use strict';
 
-    function MediaPlayerController($scope, $element) {
-        var ctrl = this,
-            $wrap = $element[0],
-            $player = $wrap.querySelector('.player'),
-            $volBtn = $wrap.querySelector('.volume-control'),
-            $volPanel = $wrap.querySelector('.volume-control-panel'),
-            $trackBtn = $wrap.querySelector('.track-control'),
-            $trackPanel = $wrap.querySelector('.track-control-panel'),
-            $trackPanelLine = $wrap.querySelector('.track-control-line'),
-            volumePosition = 0,
-            trackPosition = 0,
-            trackPanelWidth,
-            trackPanelHeight,
-            volumePanelWidth,
-            volumeCoords,
-            trackCoords,
-            duration,
-            volume,
-            currentPerc,
-            buffCanvas,
-            buffCanvasCtx;
+    const SCOPE = new WeakMap();
+    const ELEMENT = new WeakMap();
+    let variables = new WeakMap();
+    let that;
 
-        ctrl.currentTime = {
-            minutes: '00',
-            seconds: '00'
-        };
-        ctrl.totalTime = {
-            minutes: '00',
-            seconds: '00'
-        };
-
-        ctrl.play = play;
-        ctrl.pause = pause;
-
-        $player.addEventListener("loadedmetadata", function () {
-            setVolume();
-            trackPanelWidth = $trackPanel.offsetWidth;
-            trackPanelHeight = $trackPanel.offsetHeight;
-            volumePanelWidth = $volPanel.offsetWidth;
-            volumeCoords = getCoords($volPanel);
-            trackCoords = getCoords($trackPanel);
-            volumeCoords.right = volumeCoords.left + volumePanelWidth;
-            trackCoords.right = trackCoords.left + trackPanelWidth;
-            duration = Math.round($player.duration);
-            ctrl.totalTime.minutes = Math.floor(duration / 60);
-            ctrl.totalTime.seconds = duration - ctrl.totalTime.minutes * 60;
-            ctrl.totalTime.minutes = ('0' + ctrl.totalTime.minutes).slice(-2);
-            ctrl.totalTime.seconds = ('0' + ctrl.totalTime.seconds).slice(-2);
-            $volBtn.style.transform = 'translate(' + $player.volume * volumePanelWidth + 'px, 0px)';
-            addBufferedLine();
-            $scope.$apply();
-
-            if(ctrl.playing) {
-                $player.play();
-            }
-        });
-
-        $player.addEventListener("timeupdate", function () {
-            buffCanvasUpdate(this.seekable.end(0));
-            var curTime = $player.currentTime, a;
-            currentPerc = curTime / duration;
-            a = Math.floor(currentPerc * trackPanelWidth);
-            $trackBtn.style.transform = "translate(" + a + "px , 0";
-            $trackPanelLine.style.width = a + "px";
-        });
-
-        $trackBtn.addEventListener('mousedown', function () {
-            document.addEventListener('mousemove', timeDrag);
-            document.addEventListener('mouseup', function handler() {
-                document.removeEventListener('mousemove', timeDrag);
-                document.removeEventListener('mouseup', handler);
+    class MediaPlayerController {
+        constructor($scope, $element) {
+            that = this;
+            SCOPE.set(this, $scope);
+            ELEMENT.set(this, $element);
+            variables.set(this, {
+                $wrap: ELEMENT.get(this)[0],
+                $player: ELEMENT.get(this)[0].querySelector('.player'),
+                $volBtn: ELEMENT.get(this)[0].querySelector('.volume-control'),
+                $volPanel: ELEMENT.get(this)[0].querySelector('.volume-control-panel'),
+                $trackBtn: ELEMENT.get(this)[0].querySelector('.track-control'),
+                $trackPanel: ELEMENT.get(this)[0].querySelector('.track-control-panel'),
+                $trackPanelLine: ELEMENT.get(this)[0].querySelector('.track-control-line'),
+                volumePosition: 0,
+                trackPosition: 0,
+                currentTime: {
+                    minutes: '00',
+                    seconds: '00'
+                },
+                totalTime: {
+                    minutes: '00',
+                    seconds: '00'
+                }
             });
-        });
 
-        $volBtn.addEventListener('mousedown', function () {
-            document.addEventListener('mousemove', volumeDrag);
-            document.addEventListener('mouseup', function handler() {
-                document.removeEventListener('mousemove', volumeDrag);
-                document.removeEventListener('mouseup', handler);
+            variables.get(this).$player.addEventListener("loadedmetadata", function () {
+                that.setVolume();
+                variables.get(that).trackPanelWidth = variables.get(that).$trackPanel.offsetWidth;
+                variables.get(that).trackPanelHeight = variables.get(that).$trackPanel.offsetHeight;
+                variables.get(that).volumePanelWidth = variables.get(that).$volPanel.offsetWidth;
+                variables.get(that).volumeCoords = that.getCoords(variables.get(that).$volPanel);
+                variables.get(that).trackCoords = that.getCoords(variables.get(that).$trackPanel);
+                variables.get(that).volumeCoords.right = variables.get(that).volumeCoords.left + variables.get(that).volumePanelWidth;
+                variables.get(that).trackCoords.right = variables.get(that).trackCoords.left + variables.get(that).trackPanelWidth;
+                variables.get(that).duration = Math.round(variables.get(that).$player.duration);
+                variables.get(that).totalTime.minutes = Math.floor(variables.get(that).duration / 60);
+                variables.get(that).seconds = variables.get(that).duration - variables.get(that).totalTime.minutes * 60;
+                variables.get(that).minutes = ('0' + variables.get(that).totalTime.minutes).slice(-2);
+                variables.get(that).seconds = ('0' + variables.get(that).totalTime.seconds).slice(-2);
+                variables.get(that).$volBtn.style.transform = 'translate(' + variables.get(that).$player.volume * variables.get(that).volumePanelWidth + 'px, 0px)';
+                that.addBufferedLine();
+                SCOPE.get(that).$apply();
+
+                if (that.playing) {
+                    variables.get(that).$player.play();
+                }
             });
-        });
 
-        $trackPanel.addEventListener('click', function (e) {
-            timeDrag(e);
-        });
+            variables.get(this).$player.addEventListener("timeupdate", function () {
+                that.buffCanvasUpdate(variables.get(that).$player.seekable.end(0));
+                let curTime = variables.get(that).$player.currentTime, a;
+                let currentPerc = curTime / variables.get(that).duration;
+                a = Math.floor(currentPerc * variables.get(that).trackPanelWidth);
+                variables.get(that).$trackBtn.style.transform = "translate(" + a + "px , 0";
+                variables.get(that).$trackPanelLine.style.width = a + "px";
+            });
 
-        $volPanel.addEventListener('click', function (e) {
-            volumeDrag(e);
-        });
+            variables.get(this).$trackBtn.addEventListener('mousedown', function () {
+                document.addEventListener('mousemove', that.timeDrag);
+                document.addEventListener('mouseup', function handler() {
+                    document.removeEventListener('mousemove', that.timeDrag);
+                    document.removeEventListener('mouseup', handler);
+                });
+            });
 
-        function addBufferedLine() {
-            buffCanvas = document.createElement('canvas');
-            buffCanvas.classList.add('track-control-buff-line');
-            buffCanvasCtx = buffCanvas.getContext('2d');
-            buffCanvas.width = trackPanelWidth;
-            buffCanvas.height = trackPanelHeight;
-            $trackPanel.appendChild(buffCanvas);
+            variables.get(this).$volBtn.addEventListener('mousedown', function () {
+                document.addEventListener('mousemove', that.volumeDrag);
+                document.addEventListener('mouseup', function handler() {
+                    document.removeEventListener('mousemove', that.volumeDrag);
+                    document.removeEventListener('mouseup', handler);
+                });
+            });
+
+            variables.get(this).$trackPanel.addEventListener('click', function (e) {
+                that.timeDrag(e);
+            });
+
+            variables.get(this).$volPanel.addEventListener('click', function (e) {
+                that.volumeDrag(e);
+            });
         }
 
-        function buffCanvasUpdate(endTime) {
-            var x;
-            x = endTime * trackPanelWidth / duration;
-            buffCanvas.width = buffCanvas.width;
-            buffCanvasCtx.fillStyle = "rgba(255, 255, 255, .2)";
-            buffCanvasCtx.fillRect(0, 0, x, trackPanelHeight);
+        addBufferedLine() {
+            variables.get(this).buffCanvas = document.createElement('canvas');
+            variables.get(this).buffCanvas.classList.add('track-control-buff-line');
+            variables.get(this).buffCanvasCtx = variables.get(this).buffCanvas.getContext('2d');
+            variables.get(this).buffCanvas.width = variables.get(this).trackPanelWidth;
+            variables.get(this).buffCanvas.height = variables.get(this).trackPanelHeight;
+            variables.get(this).$trackPanel.appendChild(variables.get(this).buffCanvas);
         }
 
-        function timeDrag(e) {
-            if (e.pageX - trackCoords.left < 0) {
-                trackPosition = 0;
-            } else if (e.pageX > trackCoords.right) {
-                trackPosition = trackPanelWidth;
+        buffCanvasUpdate(endTime) {
+            let x;
+            x = endTime * variables.get(this).trackPanelWidth / variables.get(this).duration;
+            variables.get(this).buffCanvas.width = variables.get(this).buffCanvas.width;
+            variables.get(this).buffCanvasCtx.fillStyle = "rgba(255, 255, 255, .2)";
+            variables.get(this).buffCanvasCtx.fillRect(0, 0, x, variables.get(this).trackPanelHeight);
+        }
+
+        timeDrag(e) {
+            if (e.pageX - variables.get(that).trackCoords.left < 0) {
+                variables.get(that).trackPosition = 0;
+            } else if (e.pageX > variables.get(that).trackCoords.right) {
+                variables.get(that).trackPosition = variables.get(that).trackPanelWidth;
             } else {
-                trackPosition = e.pageX - trackCoords.left;
+                variables.get(that).trackPosition = e.pageX - variables.get(that).trackCoords.left;
             }
-            $player.currentTime = duration * trackPosition / trackPanelWidth;
-            $trackBtn.style.transform = 'translate(' + trackPosition + 'px, 0px)';
-            $trackPanelLine.style.width = trackPosition + 'px';
+            variables.get(that).$player.currentTime = variables.get(that).duration * variables.get(that).trackPosition / variables.get(that).trackPanelWidth;
+            variables.get(that).$trackBtn.style.transform = 'translate(' + variables.get(that).trackPosition + 'px, 0px)';
+            variables.get(that).$trackPanelLine.style.width = variables.get(that).trackPosition + 'px';
         }
 
-        function volumeDrag(e) {
-            if (e.pageX < volumeCoords.left) {
-                volumePosition = 0;
-            } else if (e.pageX > volumeCoords.right) {
-                volumePosition = volumePanelWidth;
+        volumeDrag(e) {
+            if (e.pageX < variables.get(that).volumeCoords.left) {
+                variables.get(that).volumePosition = 0;
+            } else if (e.pageX > variables.get(that).volumeCoords.right) {
+                variables.get(that).volumePosition = variables.get(that).volumePanelWidth;
             } else {
-                volumePosition = e.pageX - volumeCoords.left;
+                variables.get(that).volumePosition = e.pageX - variables.get(that).volumeCoords.left;
             }
-            $player.volume = volumePosition / volumePanelWidth;
-            localStorage.setItem('volume', $player.volume);
-            $volBtn.style.transform = 'translate(' + volumePosition + 'px, 0px)';
+            variables.get(that).$player.volume = variables.get(that).volumePosition / variables.get(that).volumePanelWidth;
+            localStorage.setItem('volume', variables.get(that).$player.volume);
+            variables.get(that).$volBtn.style.transform = 'translate(' + variables.get(that).volumePosition + 'px, 0px)';
         }
 
-        function setVolume() {
-            var savedVol = localStorage.getItem('volume');
+        setVolume() {
+            let savedVol = localStorage.getItem('volume');
             if (!savedVol) savedVol = 1;
-            $player.volume = savedVol;
-            $volBtn.style.transform = 'translate(' + savedVol + 'px, 0px)';
+            variables.get(that).$player.volume = savedVol;
+            variables.get(that).$volBtn.style.transform = 'translate(' + savedVol + 'px, 0px)';
         }
 
-        function getCoords(elem) {
-            var box = elem.getBoundingClientRect();
-            var body = document.body;
-            var docEl = document.documentElement;
+        getCoords(elem) {
+            let box = elem.getBoundingClientRect();
+            let body = document.body;
+            let docEl = document.documentElement;
 
-            var scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-            var scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+            let scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+            let scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
 
-            var clientTop = docEl.clientTop || body.clientTop || 0;
-            var clientLeft = docEl.clientLeft || body.clientLeft || 0;
+            let clientTop = docEl.clientTop || body.clientTop || 0;
+            let clientLeft = docEl.clientLeft || body.clientLeft || 0;
 
-            var top = box.top + scrollTop - clientTop;
-            var left = box.left + scrollLeft - clientLeft;
+            let top = box.top + scrollTop - clientTop;
+            let left = box.left + scrollLeft - clientLeft;
 
             return {top: Math.round(top), left: Math.round(left)};
         }
 
-        function play() {
-            $player.play();
+        play() {
+            variables.get(this).$player.play();
         }
 
-        function pause() {
-            $player.pause();
-            ctrl.playing = false;
-            ctrl.callback();
+        pause() {
+            variables.get(this).$player.pause();
+            this.playing = false;
+            this.callback();
         }
     }
 

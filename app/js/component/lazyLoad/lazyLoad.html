@@ -11,7 +11,7 @@
             Collection
         </th>
     </tr>
-    <tr ng-repeat="item in ctrl.visibleItems track by $index" repeat-end="ctrl.onListReady()">
+    <tr ng-repeat="item in ctrl.visibleItems track by $index">
         <td>
             <span class="results-link"
                   ng-click="ctrl.goToItemView(item.trackId, item.collectionId, 'track', item.wrapperType)">
