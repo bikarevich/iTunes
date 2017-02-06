@@ -56,7 +56,9 @@
             });
 
             variables.get(this).$player.addEventListener("timeupdate", function () {
-                that.buffCanvasUpdate(variables.get(that).$player.seekable.end(0));
+                if (variables.get(that).$player.seekable.length > 0) {
+                    that.buffCanvasUpdate(variables.get(that).$player.seekable.end(0));
+                }
                 let curTime = variables.get(that).$player.currentTime, a;
                 let currentPerc = curTime / variables.get(that).duration;
                 a = Math.floor(currentPerc * variables.get(that).trackPanelWidth);
