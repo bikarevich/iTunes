@@ -1,3 +1,4 @@
-module.exports = function () {
+class SearchResultsPageController {
+}
 
-};
+export  {SearchResultsPageController}

@@ -3,8 +3,8 @@ const CHECK_LOADER_SERVICE = new WeakMap();
 const MUSIC_PAGE_SERVICE = new WeakMap();
 
 class MusicPageController {
-    constructor(musicPageService, $state, CheckLoaderService) {
-        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
+    constructor(musicPageService, $state, checkLoaderService) {
+        CHECK_LOADER_SERVICE.set(this, checkLoaderService);
         MUSIC_PAGE_SERVICE.set(this, musicPageService);
         STATE.set(this, $state);
 

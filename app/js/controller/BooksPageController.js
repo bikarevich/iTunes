@@ -1,13 +1,12 @@
 const BOOKS_PAGE_SERVICE = new WeakMap();
 const STATE = new WeakMap();
 const SCE = new WeakMap();
-const SCOPE = new WeakMap();
 const CHECK_LOADER_SERVICE = new WeakMap();
 
 class BooksPageController {
-    constructor(booksPageService, $state, $sce, CheckLoaderService) {
+    constructor(booksPageService, $state, $sce, checkLoaderService) {
         BOOKS_PAGE_SERVICE.set(this, booksPageService);
-        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
+        CHECK_LOADER_SERVICE.set(this, checkLoaderService);
         STATE.set(this, $state);
         SCE.set(this, $sce);
 

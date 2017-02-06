@@ -1,13 +1,12 @@
-var angular = require('angular');
+let angular = require('angular');
 require('angular-ui-router');
 
-var app = angular.module('App', [
+let app = angular.module('App', [
     'ui.router'
 ]);
 
 require('./controller/index');
 require('./service/index');
-require('./directive/index');
 require('./component/index');
 
 app

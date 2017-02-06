@@ -6,13 +6,13 @@ const CHECK_LOADER_SERVICE = new WeakMap();
 const PAGE_BG_SERVICE = new WeakMap();
 
 class BookPageController {
-    constructor(bookPageService, PageBgService, $state, $sce, $scope, CheckLoaderService) {
+    constructor(bookPageService, pageBgService, $state, $sce, $scope, checkLoaderService) {
         BOOK_PAGE_SERVICE.set(this, bookPageService);
-        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
+        CHECK_LOADER_SERVICE.set(this, checkLoaderService);
         STATE.set(this, $state);
         SCE.set(this, $sce);
         SCOPE.set(this, $scope);
-        PAGE_BG_SERVICE.set(this, PageBgService);
+        PAGE_BG_SERVICE.set(this, pageBgService);
 
         this.id = STATE.get(this).params.id;
         this.body = document.querySelector('body');

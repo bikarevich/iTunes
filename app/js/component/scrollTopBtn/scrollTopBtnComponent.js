@@ -1,18 +1,25 @@
 (function (app) {
 
     'use strict';
+    const ELEMENT = new WeakMap();
+    class ScrollTopBtnController {
+        constructor($element) {
+            ELEMENT.set(this, $element);
 
-    function ScrollTopBtnController($element) {
-        var ctrl = this;
-        var windowHeight = window.innerHeight,
-            bodyHeight = document.querySelector('body').offsetHeight,
-            elemClasses = $element.children()[0].classList;
+            let elemClasses = ELEMENT.get(this).children()[0].classList;
 
-        ctrl.scrollToTop = scrollToTop;
+            window.addEventListener('scroll', function () {
+                if ((window.pageYOffset || document.documentElement.scrollTop) > 300) {
+                    elemClasses.add('visible');
+                } else {
+                    elemClasses.remove('visible');
+                }
+            });
+        }
 
-        function scrollToTop() {
-            var scrollDuration = 100;
-            var scrollStep = -window.scrollY / (scrollDuration / 15),
+        scrollToTop() {
+            let scrollDuration = 100,
+                scrollStep = -window.scrollY / (scrollDuration / 15),
                 scrollInterval = setInterval(function(){
                     if ( window.scrollY != 0 ) {
                         window.scrollBy( 0, scrollStep );
@@ -20,15 +27,6 @@
                     else clearInterval(scrollInterval);
                 },15);
         }
-
-        window.addEventListener('scroll', function () {
-            if ((window.pageYOffset || document.documentElement.scrollTop) > 300) {
-                elemClasses.add('visible');
-            } else {
-                elemClasses.remove('visible');
-            }
-        });
-
     }
 
     app.component('scrollTopBtn', {

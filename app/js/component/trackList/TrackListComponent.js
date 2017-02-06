@@ -1,49 +1,46 @@
 (function (app) {
 
     'use strict';
+    const SCE = new WeakMap();
 
-    function TrackListController($sce) {
-        var ctrl = this;
-
-        ctrl.AlbumTracks = [];
-
-        ctrl.playTrack = playTrack;
-        ctrl.stopPlayer = stopPlayer;
-
-        ctrl.$onChanges = function () {
-            if(ctrl.trackList.length > 0) {
-                ctrl.AlbumTracks = JSON.parse(ctrl.trackList);
-                if(ctrl.AlbumTracks.length > 0) {
-                    ctrl.AlbumTracks.forEach(function (item) {
-                        var duration;
-                        item.previewSceUrl = $sce.trustAsResourceUrl(item.previewUrl);
-                        item.totalTime = {};
-                        item.isPlaying = false;
-                        duration = Math.round(item.trackTimeMillis/1000);
-                        item.totalTime.minutes = Math.floor(duration / 60);
-                        item.totalTime.seconds = duration - item.totalTime.minutes * 60;
-                        item.totalTime.minutes = ('0' + item.totalTime.minutes).slice(-2);
-                        item.totalTime.seconds = ('0' + item.totalTime.seconds).slice(-2);
-                    });
+    class TrackListController {
+        constructor($sce) {
+            SCE.set(this, $sce);
+            this.trackList = [];
+            this.$onChanges = function () {
+                if(this.trackList.length > 0) {
+                    this.AlbumTracks = JSON.parse(this.trackList);
+                    if(this.AlbumTracks.length > 0) {
+                        this.AlbumTracks.forEach((item) => {
+                            let duration;
+                            item.previewSceUrl = SCE.get(this).trustAsResourceUrl(item.previewUrl);
+                            item.totalTime = {};
+                            item.isPlaying = false;
+                            duration = Math.round(item.trackTimeMillis/1000);
+                            item.totalTime.minutes = Math.floor(duration / 60);
+                            item.totalTime.seconds = duration - item.totalTime.minutes * 60;
+                            item.totalTime.minutes = ('0' + item.totalTime.minutes).slice(-2);
+                            item.totalTime.seconds = ('0' + item.totalTime.seconds).slice(-2);
+                        });
+                    }
                 }
-            }
-        };
+            };
+        }
 
-        function playTrack(data) {
-            ctrl.AlbumTracks.forEach(function (item) {
+        playTrack(data) {
+            this.AlbumTracks.forEach(function (item) {
                 item.isPlaying = false;
             });
             data.isPlaying = true;
-            ctrl.currentTrack = data;
+            this.currentTrack = data;
         }
 
-        function stopPlayer() {
-            ctrl.AlbumTracks.forEach(function (item) {
+        stopPlayer() {
+            this.AlbumTracks.forEach(function (item) {
                 item.isPlaying = false;
             });
-            ctrl.currentTrack = null;
+            this.currentTrack = null;
         }
-        
     }
 
     app.component('trackList', {

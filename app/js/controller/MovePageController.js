@@ -6,10 +6,10 @@ const SCE = new WeakMap();
 const SCOPE = new WeakMap();
 
 class MovePageController {
-    constructor(movePageService, PageBgService, $state, $sce, $scope, CheckLoaderService) {
+    constructor(movePageService, pageBgService, $state, $sce, $scope, checkLoaderService) {
         MOVE_PAGE_SERVICE.set(this, movePageService);
-        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
-        PAGE_BG_SERVICE.set(this, PageBgService);
+        CHECK_LOADER_SERVICE.set(this, checkLoaderService);
+        PAGE_BG_SERVICE.set(this, pageBgService);
         STATE.set(this, $state);
         SCE.set(this, $sce);
         SCOPE.set(this, $scope);

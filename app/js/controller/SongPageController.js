@@ -1,62 +1,80 @@
-module.exports = function (SongPageService, $state, $sce, $scope, SearchResultsPageService, SearchPanelService, PageBgService, CheckLoaderService) {
-    var ctrl = this,
-        id = $state.params.id,
-        body = document.querySelector('body');
+const SONG_PAGE_SERVICE = new WeakMap();
+const CHECK_LOADER_SERVICE = new WeakMap();
+const PAGE_BG_SERVICE = new WeakMap();
+const STATE = new WeakMap();
+const SCE = new WeakMap();
+const SCOPE = new WeakMap();
+const SEARCH_RESULTS_SERVICE = new WeakMap();
+const SEARCH_PANEL_SERVICE = new WeakMap();
+const MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-    ctrl.songData = [];
+class SongPageController {
+    constructor(songPageService, $state, $sce, $scope, searchResultsPageService, searchPanelService, pageBgService, checkLoaderService) {
+        SONG_PAGE_SERVICE.set(this, songPageService);
+        CHECK_LOADER_SERVICE.set(this, checkLoaderService);
+        PAGE_BG_SERVICE.set(this, pageBgService);
+        STATE.set(this, $state);
+        SCE.set(this, $sce);
+        SCOPE.set(this, $scope);
+        SEARCH_PANEL_SERVICE.set(this, searchPanelService);
+        SEARCH_RESULTS_SERVICE.set(this, searchResultsPageService);
 
-    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        this.id = STATE.get(this).params.id;
+        this.body = document.querySelector('body');
 
-    ctrl.findAuthor = findAuthor;
-    ctrl.goToAlbum = goToAlbum;
+        SCOPE.get(this).$on("$destroy", () => {
+            this.body.style.backgroundImage = '';
+        });
 
-    setSongData();
-
-    $scope.$on("$destroy", function () {
-        body.style.backgroundImage = '';
-    });
-
-
-    function goToAlbum(id) {
-        $state.go('album', {id: id});
+        this.init();
     }
 
-    function setSongData() {
-        SongPageService.getSongData(id).then(function (response) {
-            var duration;
-            ctrl.songData = response.data.results[0];
-            ctrl.tracksList = response.data.results;
-            ctrl.songData.largePreviewImgUrl = getLargePreviewImage();
-            var date = new Date(ctrl.songData.releaseDate);
-            var newDate = ('0' + date.getDate()).slice(-2) + ' ' + months[date.getMonth()] + ', ' + date.getFullYear();
-            ctrl.songData.releaseDate = newDate;
-            if (ctrl.songData.trackPrice < 0) {
-                ctrl.songData.trackPrice = 0
+    init() {
+        this.setSongData();
+    }
+
+    goToAlbum(id) {
+        STATE.get(this).go('album', {id: id});
+    }
+
+    setSongData() {
+        SONG_PAGE_SERVICE.get(this).getSongData(this.id).then((response) => {
+            let duration;
+            this.songData = response.data.results[0];
+            this.tracksList = response.data.results;
+            this.songData.largePreviewImgUrl = this.getLargePreviewImage();
+            let date = new Date(this.songData.releaseDate);
+            let newDate = ('0' + date.getDate()).slice(-2) + ' ' + MONTH[date.getMonth()] + ', ' + date.getFullYear();
+            this.songData.releaseDate = newDate;
+            if (this.songData.trackPrice < 0) {
+                this.songData.trackPrice = 0
             }
-            PageBgService.getBase64Img(ctrl.songData.largePreviewImgUrl).then(function (response) {
-                body.style.backgroundImage = 'url(' + response.url + ')';
+            PAGE_BG_SERVICE.get(this).getBase64Img(this.songData.largePreviewImgUrl).then((response) => {
+                this.body.style.backgroundImage = 'url(' + response.url + ')';
                 if (response.luma) {
                     document.querySelector('.songColorWrap').classList.add('white');
                 } else {
                     document.querySelector('.songColorWrap').classList.remove('white');
                 }
-                CheckLoaderService.disableLoader();
+                CHECK_LOADER_SERVICE.get(this).disableLoader();
             });
         })
     }
 
-    function getLargePreviewImage() {
-        return ctrl.songData.artworkUrl100.replace('100x100bb', '1000x1000bb');
+    getLargePreviewImage() {
+        return this.songData.artworkUrl100.replace('100x100bb', '1000x1000bb');
     }
 
-    function findAuthor(name) {
-        SearchPanelService.getSearchResults({term: name, limit: 200, media: 'music'}).then(function (response) {
-            SearchResultsPageService.setResults(response.data);
-            if ($state.current.name != 'search') {
-                $state.go('search');
+    findAuthor(name) {
+        SEARCH_PANEL_SERVICE.get(this).getSearchResults({term: name, limit: 200, media: 'music'}).then((response) => {
+            SEARCH_RESULTS_SERVICE.get(this).setResults(response.data);
+            if (STATE.get(this).current.name != 'search') {
+                STATE.get(this).go('search');
             } else {
                 $rootScope.$emit("CallUpdateSearchResults", {});
             }
         });
     }
-};
+}
+
+export {SongPageController};

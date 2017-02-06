@@ -2,7 +2,7 @@
 
         'use strict';
 
-        function LazyLoadController($rootScope, $scope, SearchResultsPageService, CheckLoaderService, $state) {
+        function LazyLoadController($rootScope, $scope, searchResultsPageService, checkLoaderService, $state) {
             var ctrl = this,
                 windowHeight = window.innerHeight,
                 bodyHeight = document.querySelector('body').offsetHeight,
@@ -129,7 +129,7 @@
             });
 
             $scope.updateSearchResults = function () {
-                ctrl.results = SearchResultsPageService.getResults();
+                ctrl.results = searchResultsPageService.getResults();
                 countVisible = 0;
                 itemsStep = 10;
                 totalItems = 0;
@@ -139,7 +139,7 @@
                     countVisible = countVisible + itemsStep;
                     heightUpdated = false;
                 }
-                CheckLoaderService.disableLoader();
+                checkLoaderService.disableLoader();
             };
 
             $scope.updateSearchResults();

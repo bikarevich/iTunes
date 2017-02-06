@@ -9,18 +9,19 @@ const CHECK_LOADER_SERVICE = new WeakMap();
 const MONTH = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 class AlbumPageController {
-    constructor(albumPageService, $state, $sce, $scope, SearchResultsPageService, SearchPanelService, PageBgService, CheckLoaderService) {
+    constructor(albumPageService, $state, $sce, $scope, searchResultsPageService, searchPanelService, pageBgService, checkLoaderService) {
         ALBUM_PAGE_SERVICE.set(this, albumPageService);
-        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
+        CHECK_LOADER_SERVICE.set(this, checkLoaderService);
         STATE.set(this, $state);
         SCE.set(this, $sce);
         SCOPE.set(this, $scope);
-        SEARCH_RESULTS_PAGE_SERVICE.set(this, SearchResultsPageService);
-        SEARCH_PANELS_ERVICE.set(this, SearchPanelService);
-        PAGE_BG_SERVICE.set(this, PageBgService);
+        SEARCH_RESULTS_PAGE_SERVICE.set(this, searchResultsPageService);
+        SEARCH_PANELS_ERVICE.set(this, searchPanelService);
+        PAGE_BG_SERVICE.set(this, pageBgService);
 
         this.id = STATE.get(this).params.id;
         this.body = document.querySelector('body');
+
 
         SCOPE.get(this).$on("$destroy", () => {
             this.body.style.backgroundImage = '';

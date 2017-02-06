@@ -4,8 +4,8 @@ const CHECK_LOADER_SERVICE = new WeakMap();
 const MOVE_PAGE_SERVICE = new WeakMap();
 
 class MovesPageController {
-    constructor(movesPageService, $state, $sce, CheckLoaderService) {
-        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
+    constructor(movesPageService, $state, $sce, checkLoaderService) {
+        CHECK_LOADER_SERVICE.set(this, checkLoaderService);
         MOVE_PAGE_SERVICE.set(this, movesPageService);
         STATE.set(this, $state);
         SCE.set(this, $sce);

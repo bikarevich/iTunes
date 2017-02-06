@@ -4,9 +4,9 @@ const STATE = new WeakMap();
 const SCE = new WeakMap();
 
 class MainPageController {
-    constructor(mainPageService, CheckLoaderService, $state, $sce) {
+    constructor(mainPageService, checkLoaderService, $state, $sce) {
         MAIN_PAGE_SERVICE.set(this, mainPageService);
-        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
+        CHECK_LOADER_SERVICE.set(this, checkLoaderService);
         STATE.set(this, $state);
         SCE.set(this, $sce);
         this.init();

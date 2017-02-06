@@ -1,9 +1,12 @@
 'use strict';
 
-module.exports = function () {
-    this.getBase64Img = function (url) {
+class pageBgService {
+    constructor() {
+    }
+
+    getBase64Img(url) {
         return new Promise(function (resolve, reject) {
-            var width = window.innerWidth,
+            let width = window.innerWidth,
                 height = window.innerHeight,
                 pageBg = document.createElement('canvas'),
                 body = document.querySelector('body'),
@@ -38,9 +41,9 @@ module.exports = function () {
             }
 
             img.addEventListener('load', function handler() {
-                ctx.drawImage(img, -(imgWidth*1.3 - width) / 2, -(imgHeight*1.3 - height) / 2, imgWidth*1.3, imgHeight*1.3);
+                ctx.drawImage(img, -(imgWidth * 1.3 - width) / 2, -(imgHeight * 1.3 - height) / 2, imgWidth * 1.3, imgHeight * 1.3);
                 ctx.filter = 'blur(35px)';
-                ctx.drawImage(img, -(imgWidth*1.3 - width) / 2, -(imgHeight*1.3 - height) / 2, imgWidth*1.3, imgHeight*1.3);
+                ctx.drawImage(img, -(imgWidth * 1.3 - width) / 2, -(imgHeight * 1.3 - height) / 2, imgWidth * 1.3, imgHeight * 1.3);
                 ctx.globalAlpha = 0.4;
                 ctx.fillRect(0, 0, width, height);
                 data = ctx.getImageData(0, 0, imgWidth, imgHeight);
@@ -66,11 +69,11 @@ module.exports = function () {
 
                 pageBg.toBlob(function (blob) {
                     reader.readAsDataURL(blob);
-                    reader.addEventListener('loadend', function handler(){
+                    reader.addEventListener('loadend', function handler() {
                         reader.removeEventListener('loadend', handler);
                         pageBg = null;
                         img = null;
-                        resolve({url : reader.result, luma : lumaClass});
+                        resolve({url: reader.result, luma: lumaClass});
                     });
                 });
 
@@ -85,9 +88,7 @@ module.exports = function () {
 
             img.src = url;
         });
-
-
-
-
     };
-};
+}
+
+export  {pageBgService};

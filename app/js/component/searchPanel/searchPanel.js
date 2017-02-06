@@ -1,8 +1,8 @@
-var controller = require('./SearchPanelController');
+import {SearchPanelController} from './SearchPanelController';
 
 module.exports = {
     templateUrl: 'js/component/searchPanel/searchPanel.html',
-    controller: controller,
+    controller: SearchPanelController,
     controllerAs : 'ctrl'
 };
 
