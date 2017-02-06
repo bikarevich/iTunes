@@ -1,39 +1,53 @@
-module.exports = function (BookPageService, PageBgService, $state, $sce, $scope, CheckLoaderService) {
-    var ctrl = this,
-        id = $state.params.id,
-        img = document.createElement('img'),
-        pageBg = document.createElement('canvas'),
-        ctx = pageBg.getContext('2d'),
-        body = document.querySelector('body');
+const BOOK_PAGE_SERVICE = new WeakMap();
+const STATE = new WeakMap();
+const SCE = new WeakMap();
+const SCOPE = new WeakMap();
+const CHECK_LOADER_SERVICE = new WeakMap();
+const PAGE_BG_SERVICE = new WeakMap();
 
+class BookPageController {
+    constructor(bookPageService, PageBgService, $state, $sce, $scope, CheckLoaderService) {
+        BOOK_PAGE_SERVICE.set(this, bookPageService);
+        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
+        STATE.set(this, $state);
+        SCE.set(this, $sce);
+        SCOPE.set(this, $scope);
+        PAGE_BG_SERVICE.set(this, PageBgService);
 
-    img.crossOrigin = "Anonymous";
-    ctrl.moveData = [];
+        this.id = STATE.get(this).params.id;
+        this.body = document.querySelector('body');
 
-    setBookData();
+        SCOPE.get(this).$on("$destroy", () => {
+            this.body.style.backgroundImage = '';
+        });
 
-    $scope.$on("$destroy", function() {
-        body.style.backgroundImage = '';
-    });
+        this.init();
+    }
 
-    function setBookData() {
-        BookPageService.getBookData(id).then(function(response) {
-            ctrl.bookData = response.data.results[0];
-            ctrl.bookData.description = $sce.trustAsHtml(ctrl.bookData.description);
-            ctrl.bookData.largePreviewImgUrl = getLargePreviewImage();
-            PageBgService.getBase64Img(ctrl.bookData.largePreviewImgUrl).then(function(response) {
-                body.style.backgroundImage = 'url(' + response.url  + ')';
-                if(response.luma) {
+    init() {
+        this.setBookData();
+    }
+
+    setBookData() {
+        BOOK_PAGE_SERVICE.get(this).getBookData(this.id).then((response) => {
+            this.bookData = response.data.results[0];
+            this.bookData.description = SCE.get(this).trustAsHtml(this.bookData.description);
+            this.bookData.largePreviewImgUrl = this.getLargePreviewImage();
+            PAGE_BG_SERVICE.get(this).getBase64Img(this.bookData.largePreviewImgUrl).then((response) => {
+                this.body.style.backgroundImage = 'url(' + response.url + ')';
+                if (response.luma) {
                     document.querySelector('.songColorWrap').classList.add('white');
                 } else {
                     document.querySelector('.songColorWrap').classList.remove('white');
                 }
-                CheckLoaderService.disableLoader();
+                CHECK_LOADER_SERVICE.get(this).disableLoader();
             });
         })
     }
 
-    function getLargePreviewImage () {
-        return ctrl.bookData.artworkUrl100.replace('100x100bb', '1000x1000bb');
+    getLargePreviewImage() {
+        return this.bookData.artworkUrl100.replace('100x100bb', '1000x1000bb');
     }
-};
+}
+
+export {BookPageController};

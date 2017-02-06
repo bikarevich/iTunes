@@ -1,6 +1,8 @@
+'use strict';
+
 module.exports = function () {
     this.getBase64Img = function (url) {
-        return promise = new Promise(function (resolve, reject) {
+        return new Promise(function (resolve, reject) {
             var width = window.innerWidth,
                 height = window.innerHeight,
                 pageBg = document.createElement('canvas'),

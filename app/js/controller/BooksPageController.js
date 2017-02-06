@@ -1,34 +1,46 @@
-module.exports = function (BooksPageService, $state, $sce, CheckLoaderService) {
-    var ctrl = this;
+const BOOKS_PAGE_SERVICE = new WeakMap();
+const STATE = new WeakMap();
+const SCE = new WeakMap();
+const SCOPE = new WeakMap();
+const CHECK_LOADER_SERVICE = new WeakMap();
 
-    ctrl.topFreeBooks = [];
-    ctrl.topPaidBooks = [];
+class BooksPageController {
+    constructor(booksPageService, $state, $sce, CheckLoaderService) {
+        BOOKS_PAGE_SERVICE.set(this, booksPageService);
+        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
+        STATE.set(this, $state);
+        SCE.set(this, $sce);
 
-    ctrl.goToBookView = goToBookView;
+        this.init();
+    }
 
-    setTopFreeBooks();
-    setTopPaidBooks();
+    init() {
+        this.setTopFreeBooks();
+        this.setTopPaidBooks();
+    }
 
-    function setTopFreeBooks() {
-        BooksPageService.getTopFreeBooks().then(function (response) {
-            ctrl.topFreeBooks = response.data.feed.entry;
-            angular.forEach(ctrl.topFreeBooks, function (item, key) {
-                item.summary.label = $sce.trustAsHtml(item.summary.label);
-                CheckLoaderService.disableLoader();
+    setTopFreeBooks() {
+        BOOKS_PAGE_SERVICE.get(this).getTopFreeBooks().then((response) => {
+            this.topFreeBooks = response.data.feed.entry;
+            this.topFreeBooks.forEach((item) => {
+                item.summary.label = SCE.get(this).trustAsHtml(item.summary.label);
+                CHECK_LOADER_SERVICE.get(this).disableLoader();
             });
         });
     }
 
-    function setTopPaidBooks() {
-        BooksPageService.getTopPaidBooks().then(function (response) {
-            ctrl.topPaidBooks = response.data.feed.entry;
-            angular.forEach(ctrl.topPaidBooks, function (item, key) {
-                item.summary.label = $sce.trustAsHtml(item.summary.label);
+    setTopPaidBooks() {
+        BOOKS_PAGE_SERVICE.get(this).getTopPaidBooks().then((response) => {
+            this.topPaidBooks = response.data.feed.entry;
+            this.topPaidBooks.forEach((item) => {
+                item.summary.label = SCE.get(this).trustAsHtml(item.summary.label);
             });
         });
     }
 
-    function goToBookView(id) {
-        $state.go('book', {id: id});
+    goToBookView(id) {
+        STATE.get(this).go('book', {id: id});
     }
-};
+}
+
+export {BooksPageController};

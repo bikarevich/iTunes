@@ -1,9 +1,17 @@
-module.exports = function (API, $sce) {
-    var moveUrl =  $sce.trustAsResourceUrl('https://itunes.apple.com/lookup');
+const API_SERVICE = new WeakMap();
+const SCE = new WeakMap();
+const MOVE_URL = new WeakMap();
 
-    this.getMoveData = function(id) {
-        return API.$jsonp(moveUrl, {id:id}).then(function(response) {
-            return response;
-        })
+class movePageService {
+    constructor(API, $sce) {
+        API_SERVICE.set(this, API);
+        SCE.set(this, $sce);
+        MOVE_URL.set(this, SCE.get(this).trustAsResourceUrl('https://itunes.apple.com/lookup'));
+    }
+
+    getMoveData(id) {
+        return API_SERVICE.get(this).$jsonp(MOVE_URL.get(this), {id: id}).then(response => response);
     };
-};
+}
+
+export {movePageService};

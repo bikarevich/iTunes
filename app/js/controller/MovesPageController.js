@@ -1,34 +1,45 @@
-module.exports = function (MovesPageService, $state, $sce, CheckLoaderService) {
-    var ctrl = this;
+const STATE = new WeakMap();
+const SCE = new WeakMap();
+const CHECK_LOADER_SERVICE = new WeakMap();
+const MOVE_PAGE_SERVICE = new WeakMap();
 
-    ctrl.topVideoRentals = [];
-    ctrl.topMoves = [];
+class MovesPageController {
+    constructor(movesPageService, $state, $sce, CheckLoaderService) {
+        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
+        MOVE_PAGE_SERVICE.set(this, movesPageService);
+        STATE.set(this, $state);
+        SCE.set(this, $sce);
 
-    ctrl.goToMoveView = goToMoveView;
+        this.init();
+    }
 
-    setTopMoves();
-    setTopVideoRentals();
+    init() {
+        this.setTopMoves();
+        this.setTopVideoRentals();
+    }
 
-    function setTopMoves() {
-        MovesPageService.getTopMoves().then(function (response) {
-            ctrl.topMoves = response.data.feed.entry;
-            angular.forEach(ctrl.topMoves, function(item, key) {
-                item.summary.label = $sce.trustAsHtml(item.summary.label);
+    setTopMoves() {
+        MOVE_PAGE_SERVICE.get(this).getTopMoves().then((response) => {
+            this.topMoves = response.data.feed.entry;
+            this.topMoves.forEach((item) => {
+                item.summary.label = SCE.get(this).trustAsHtml(item.summary.label);
             });
-            CheckLoaderService.disableLoader();
         });
     }
 
-    function setTopVideoRentals() {
-        MovesPageService.getTopVideoRentals().then(function (response) {
-            ctrl.topVideoRentals = response.data.feed.entry;
-            angular.forEach(ctrl.topVideoRentals, function(item, key) {
-                item.summary.label = $sce.trustAsHtml(item.summary.label);
+    setTopVideoRentals() {
+        MOVE_PAGE_SERVICE.get(this).getTopVideoRentals().then((response) => {
+            this.topVideoRentals = response.data.feed.entry;
+            this.topVideoRentals.forEach((item) => {
+                item.summary.label = SCE.get(this).trustAsHtml(item.summary.label);
             });
+            CHECK_LOADER_SERVICE.get(this).disableLoader();
         });
     }
 
-    function goToMoveView(id) {
-        $state.go('move', {id: id});
+    goToMoveView(id) {
+        STATE.get(this).go('move', {id: id});
     }
-};
+}
+
+export {MovesPageController};

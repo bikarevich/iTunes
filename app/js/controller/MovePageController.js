@@ -1,39 +1,54 @@
-module.exports = function (MovePageService, PageBgService, $state, $sce, $scope, CheckLoaderService) {
-    var ctrl = this,
-        id = $state.params.id,
-        img = document.createElement('img'),
-        pageBg = document.createElement('canvas'),
-        ctx = pageBg.getContext('2d'),
-        body = document.querySelector('body');
+const MOVE_PAGE_SERVICE = new WeakMap();
+const CHECK_LOADER_SERVICE = new WeakMap();
+const PAGE_BG_SERVICE = new WeakMap();
+const STATE = new WeakMap();
+const SCE = new WeakMap();
+const SCOPE = new WeakMap();
 
-    img.crossOrigin = "Anonymous";
+class MovePageController {
+    constructor(movePageService, PageBgService, $state, $sce, $scope, CheckLoaderService) {
+        MOVE_PAGE_SERVICE.set(this, movePageService);
+        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
+        PAGE_BG_SERVICE.set(this, PageBgService);
+        STATE.set(this, $state);
+        SCE.set(this, $sce);
+        SCOPE.set(this, $scope);
 
-    ctrl.moveData = [];
+        this.id = STATE.get(this).params.id;
+        this.body = document.querySelector('body');
 
-    setSongData();
+        SCOPE.get(this).$on("$destroy", () => {
+            this.body.style.backgroundImage = '';
+        });
 
-    $scope.$on("$destroy", function() {
-        body.style.backgroundImage = '';
-    });
+        this.init();
+    }
+    
+    init() {
+        this.setSongData();
+    }
 
-    function setSongData() {
-        MovePageService.getMoveData(id).then(function(response) {
-            ctrl.moveData = response.data.results[0];
-            ctrl.moveData.previewUrl = $sce.trustAsResourceUrl(ctrl.moveData.previewUrl);
-            ctrl.moveData.largePreviewImgUrl = getLargePreviewImage();
-            PageBgService.getBase64Img(ctrl.moveData.largePreviewImgUrl).then(function(response) {
-                body.style.backgroundImage = 'url(' + response.url  + ')';
-                if(response.luma) {
+
+    setSongData() {
+        MOVE_PAGE_SERVICE.get(this).getMoveData(this.id).then((response) => {
+            this.moveData = response.data.results[0];
+            this.moveData.previewUrl = SCE.get(this).trustAsResourceUrl(this.moveData.previewUrl);
+            this.moveData.largePreviewImgUrl = this.getLargePreviewImage();
+            PAGE_BG_SERVICE.get(this).getBase64Img(this.moveData.largePreviewImgUrl).then((response) => {
+                this.body.style.backgroundImage = 'url(' + response.url + ')';
+                if (response.luma) {
                     document.querySelector('.songColorWrap').classList.add('white');
                 } else {
                     document.querySelector('.songColorWrap').classList.remove('white');
                 }
-                CheckLoaderService.disableLoader();
+                CHECK_LOADER_SERVICE.get(this).disableLoader();
             });
         })
     }
 
-    function getLargePreviewImage () {
-        return ctrl.moveData.artworkUrl100.replace('100x100bb', '1000x1000bb');
+    getLargePreviewImage() {
+        return this.moveData.artworkUrl100.replace('100x100bb', '1000x1000bb');
     }
-};
+}
+
+export {MovePageController};

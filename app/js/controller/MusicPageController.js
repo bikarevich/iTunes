@@ -1,37 +1,45 @@
-module.exports = function (MusicPageService, $state, CheckLoaderService) {
-    var ctrl = this;
+const STATE = new WeakMap();
+const CHECK_LOADER_SERVICE = new WeakMap();
+const MUSIC_PAGE_SERVICE = new WeakMap();
 
-    ctrl.topAlbums = [];
-    ctrl.topSongs = [];
+class MusicPageController {
+    constructor(musicPageService, $state, CheckLoaderService) {
+        CHECK_LOADER_SERVICE.set(this, CheckLoaderService);
+        MUSIC_PAGE_SERVICE.set(this, musicPageService);
+        STATE.set(this, $state);
 
-    ctrl.goToSongView = goToSongView;
-    ctrl.goToAlbumView = goToAlbumView;
+        this.init();
+    }
 
-    function setTopAlbums() {
-        MusicPageService.getTopAlbums().then(function (response) {
-            ctrl.topAlbums = response.data.feed.entry;
+    init() {
+        this.setTopAlbums();
+        this.setTopSongs();
+    }
+
+    setTopAlbums() {
+        MUSIC_PAGE_SERVICE.get(this).getTopAlbums().then((response) => {
+            this.topAlbums = response.data.feed.entry;
         });
     }
 
-    function setTopSongs() {
-        MusicPageService.getTopSongs().then(function (response) {
-            ctrl.topSongs = response.data.feed.entry;
-            ctrl.topSongs.forEach(function (item) {
-                var href = item['im:collection'].link.attributes.href;
+    setTopSongs() {
+        MUSIC_PAGE_SERVICE.get(this).getTopSongs().then((response) => {
+            this.topSongs = response.data.feed.entry;
+            this.topSongs.forEach((item) => {
+                let href = item['im:collection'].link.attributes.href;
                 item.collectionId = href.substring(href.lastIndexOf("/")+3,href.lastIndexOf("?"));
             });
-            CheckLoaderService.disableLoader();
+            CHECK_LOADER_SERVICE.get(this).disableLoader();
         });
     }
 
-    function goToAlbumView(id) {
-        $state.go('album', {id: id});
+    goToAlbumView(id) {
+        STATE.get(this).go('album', {id: id});
     }
 
-    function goToSongView(id) {
-        $state.go('song', {id: id});
+    goToSongView(id) {
+        STATE.get(this).go('song', {id: id});
     }
+}
 
-    setTopAlbums();
-    setTopSongs();
-};
+export {MusicPageController};

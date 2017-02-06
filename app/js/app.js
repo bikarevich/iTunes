@@ -71,12 +71,11 @@ app
                 controller: 'SearchResultsPageController',
                 controllerAs: 'ctrl'
             });
-
     })
     .run(function ($rootScope) {
         $rootScope.showLoader = true;
 
-        $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options){
+        $rootScope.$on('$stateChangeStart', function () {
             $rootScope.showLoader = true;
         });
     });
