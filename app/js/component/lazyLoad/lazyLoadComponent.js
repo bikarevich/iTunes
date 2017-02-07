@@ -1,59 +1,106 @@
 (function (app) {
-
         'use strict';
 
-        function LazyLoadController($rootScope, $scope, searchResultsPageService, checkLoaderService, $state) {
-            var ctrl = this,
-                windowHeight = window.innerHeight,
-                bodyHeight = document.querySelector('body').offsetHeight,
-                heightUpdated,
-                scrolled,
-                countVisible = 0,
-                itemsStep = 10,
-                totalItems = 0;
+        let variables = new WeakMap();
+        const SCOPE = new WeakMap();
+        const STATE = new WeakMap();
+        const ROOT_SCOPE = new WeakMap();
+        const SEARCH_RESULTS_SERVICE = new WeakMap();
+        const CHECK_LOADER_SERVICE = new WeakMap();
 
-            ctrl.isSorted = false;
-            ctrl.visibleItems = [];
-            ctrl.results = [];
+        class LazyLoadController {
+            constructor($rootScope, $scope, searchResultsPageService, checkLoaderService, $state) {
+                let that = this;
+                SCOPE.set(this, $scope);
+                ROOT_SCOPE.set(this, $rootScope);
+                SEARCH_RESULTS_SERVICE.set(this, searchResultsPageService);
+                CHECK_LOADER_SERVICE.set(this, checkLoaderService);
+                STATE.set(this, $state);
+                variables.set(this, {
+                    windowHeight: window.innerHeight,
+                    bodyHeight: document.querySelector('body').offsetHeight,
+                    heightUpdated: false,
+                    scrolled: false,
+                    countVisible: 0,
+                    itemsStep: 10,
+                    totalItems: 0
+                });
 
-            ctrl.goToItemView = goToItemView;
-            ctrl.sortType = sortType;
+                this.isSorted = false;
+                this.visibleItems = [];
+                this.results = [];
 
-            function goToItemView(trackId, collectionId, linkType, wrapperType) {
+                ROOT_SCOPE.get(this).$on("CallUpdateSearchResults", function () {
+                    SCOPE.get(that).updateSearchResults();
+                });
+
+                SCOPE.get(this).updateSearchResults = function () {
+                    that.results = SEARCH_RESULTS_SERVICE.get(that).getResults();
+                    variables.get(that).countVisible = 0;
+                    variables.get(that).itemsStep = 10;
+                    variables.get(that).totalItems = 0;
+                    if (that.results.results && that.results.results.length > 0) {
+                        variables.get(that).totalItems = that.results.resultCount;
+                        that.visibleItems = that.results.results.slice(variables.get(that).countVisible, variables.get(that).itemsStep);
+                        variables.get(that).countVisible = variables.get(that).countVisible + variables.get(that).itemsStep;
+                        variables.get(that).heightUpdated = false;
+                    }
+                    CHECK_LOADER_SERVICE.get(that).disableLoader();
+                };
+
+                SCOPE.get(this).updateSearchResults();
+
+                window.addEventListener('scroll', function () {
+                    that.checkScroll();
+                });
+            }
+
+            checkScroll() {
+                let that = this;
+                (that.debounce(function () {
+                    that.updateBodyHeight();
+                    variables.get(that).scrolled = window.pageYOffset || document.documentElement.scrollTop;
+                    if (that.getScrollPerc(variables.get(that).scrolled) > 90) {
+                        that.addNewItems();
+                    }
+                }, 200))();
+            }
+
+            goToItemView(trackId, collectionId, linkType, wrapperType) {
                 if (wrapperType && wrapperType === 'track') {
                     switch (linkType) {
                         case 'track' :
-                            $state.go('song', {id: trackId});
+                            STATE.get(this).go('song', {id: trackId});
                             break;
                         case 'collection' :
-                            $state.go('album', {id: collectionId});
+                            STATE.get(this).go('album', {id: collectionId});
                             break;
                     }
                 } else {
                     switch (wrapperType) {
                         case 'track' :
-                            $state.go('song', {id: trackId || collectionId});
+                            STATE.get(this).go('song', {id: trackId || collectionId});
                             break;
                         case 'album' :
-                            $state.go('album', {id: trackId || collectionId});
+                            STATE.get(this).go('album', {id: trackId || collectionId});
                             break;
                         case 'audiobook' :
-                            $state.go('book', {id: trackId || collectionId});
+                            STATE.get(this).go('book', {id: trackId || collectionId});
                             break;
                         case 'book' :
-                            $state.go('book', {id: trackId || collectionId});
+                            STATE.get(this).go('book', {id: trackId || collectionId});
                             break;
                         default :
-                            $state.go('move', {id: trackId || collectionId});
+                            STATE.get(this).go('move', {id: trackId || collectionId});
                     }
                 }
             }
 
-            function sortType() {
-                ctrl.visibleItems.sort(sortByType);
+            sortType() {
+                this.visibleItems.sort(this.sortByType);
             }
 
-            function sortByType(a, b) {
+            sortByType(a, b) {
                 if (a.wrapperType > b.wrapperType) return 1;
                 if (a.wrapperType < b.wrapperType) return -1;
                 if (a.wrapperType == b.wrapperType) {
@@ -62,15 +109,15 @@
                 }
             }
 
-            function updateBodyHeight() {
-                if (!heightUpdated) {
-                    bodyHeight = document.querySelector('body').offsetHeight;
-                    heightUpdated = true;
+            updateBodyHeight() {
+                if (!variables.get(this).heightUpdated) {
+                    variables.get(this).bodyHeight = document.querySelector('body').offsetHeight;
+                    variables.get(this).heightUpdated = true;
                 }
             }
 
-            function debounce(func, ms) {
-                var isThrottled = false,
+            debounce(func, ms) {
+                let isThrottled = false,
                     savedArgs,
                     savedThis;
 
@@ -94,59 +141,28 @@
                 return wrapper;
             }
 
-            function getScrollPerc(scroll) {
-                return Math.round(100 * scroll / (bodyHeight - windowHeight));
+            getScrollPerc(scroll) {
+                return Math.round(100 * scroll / (variables.get(this).bodyHeight - variables.get(this).windowHeight));
             }
 
-            function addNewItems() {
-                if (countVisible + itemsStep < totalItems) {
-                    ctrl.visibleItems = ctrl.visibleItems.concat(ctrl.results.results.slice(countVisible, countVisible + itemsStep));
-                    countVisible = countVisible + itemsStep;
-                    heightUpdated = false;
-                    ctrl.isSorted = false;
-                    $scope.$apply();
-                } else if (countVisible > totalItems) {
+            addNewItems() {
+                if (variables.get(this).countVisible + variables.get(this).itemsStep < variables.get(this).totalItems) {
+                    this.visibleItems = this.visibleItems.concat(this.results.results.slice(variables.get(this).countVisible, variables.get(this).countVisible + variables.get(this).itemsStep));
+                    variables.get(this).countVisible = variables.get(this).countVisible + variables.get(this).itemsStep;
+                    variables.get(this).heightUpdated = false;
+                    this.isSorted = false;
+                    SCOPE.get(this).$apply();
+                } else if (variables.get(this).countVisible > variables.get(this).totalItems) {
                     return false;
-                } else if (countVisible + itemsStep >= totalItems) {
-                    ctrl.visibleItems = ctrl.visibleItems.concat(ctrl.results.results.slice(countVisible, ctrl.results.results.length));
-                    countVisible = countVisible + itemsStep;
-                    heightUpdated = false;
-                    ctrl.isSorted = false;
-                    $scope.$apply();
+                } else if (variables.get(this).countVisible + variables.get(this).itemsStep >= variables.get(this).totalItems) {
+                    this.visibleItems = this.visibleItems.concat(this.results.results.slice(variables.get(this).countVisible, this.results.results.length));
+                    variables.get(this).countVisible = variables.get(this).countVisible + variables.get(this).itemsStep;
+                    variables.get(this).heightUpdated = false;
+                    this.isSorted = false;
+                    SCOPE.get(this).$apply();
                 }
             }
 
-            var checkScroll = debounce(function () {
-                updateBodyHeight();
-                scrolled = window.pageYOffset || document.documentElement.scrollTop;
-                if (getScrollPerc(scrolled) > 90) {
-                    addNewItems();
-                }
-            }, 200);
-
-            $rootScope.$on("CallUpdateSearchResults", function () {
-                $scope.updateSearchResults();
-            });
-
-            $scope.updateSearchResults = function () {
-                ctrl.results = searchResultsPageService.getResults();
-                countVisible = 0;
-                itemsStep = 10;
-                totalItems = 0;
-                if (ctrl.results.results && ctrl.results.results.length > 0) {
-                    totalItems = ctrl.results.resultCount;
-                    ctrl.visibleItems = ctrl.results.results.slice(countVisible, itemsStep);
-                    countVisible = countVisible + itemsStep;
-                    heightUpdated = false;
-                }
-                checkLoaderService.disableLoader();
-            };
-
-            $scope.updateSearchResults();
-
-            window.addEventListener('scroll', function () {
-                checkScroll();
-            });
         }
 
         app.component('lazyLoad', {
