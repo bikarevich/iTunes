@@ -1,5 +1,4 @@
 (function (app) {
-
     'use strict';
     const ELEMENT = new WeakMap();
     class ScrollTopBtnController {

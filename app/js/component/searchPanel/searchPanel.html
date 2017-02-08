@@ -1,5 +1,5 @@
 <div class="search-panel">
-    <form name="searchForm" novalidate ng-submit="ctrl.submitSearch()">
+    <form name="searchForm" novalidate ng-submit="ctrl.proxy()">
         <input type="search" ng-model="ctrl.searchData.term" class="field" required ng-minlength="1">
         <button type="submit" class="button"><i class="fa fa-search" aria-hidden="true"></i></button>
     </form>

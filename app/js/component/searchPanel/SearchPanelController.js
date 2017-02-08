@@ -14,14 +14,22 @@ class SearchPanelController{
         ROOT_SCOPE.set(this, $rootScope);
         CHECK_LOADER_SERVICE.set(this, checkLoaderService);
 
+        let ctrl = this;
+
         this.searchData = {
             term : '',
             limit : '200'
         };
+
+        this.proxy = new Proxy(this.submitSearch, {
+            apply: function(target, thisArg, argumentsList) {
+                CHECK_LOADER_SERVICE.get(ctrl).enableLoader();
+                return target.apply(thisArg, argumentsList);
+            }
+        });
     }
 
     submitSearch() {
-        CHECK_LOADER_SERVICE.get(this).enableLoader();
         SEARCH_PANEL_SERVICE.get(this).getSearchResults(this.searchData).then((response) => {
             SEARCH_RESULTS_SERVICE.get(this).setResults(response.data);
             if(STATE.get(this).current.name != 'search') {
