@@ -64,6 +64,7 @@ class AlbumPageController extends ItemViewController {
     }
 
     findAuthor(name) {
+        this.checkLoaderService.enableLoader();
         this.searchPanelService.getSearchResults({term: name, limit: 200, media: 'music'}).then((response) => {
             this.searchResultsPageService.setResults(response.data);
             if (this.$state.current.name != 'search') {

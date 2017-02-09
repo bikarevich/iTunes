@@ -1,18 +1,29 @@
 (function (app) {
     'use strict';
-    const ELEMENT = new WeakMap();
+
+    let variables = new WeakMap();
+
     class ScrollTopBtnController {
-        constructor($element) {
-            ELEMENT.set(this, $element);
+        constructor($element, $scope) {
+            variables.set(this, {
+                $scope,
+                $element : $element
+            });
 
-            let elemClasses = ELEMENT.get(this).children()[0].classList;
+            let elemClasses = $element[0].firstElementChild.classList;
 
-            window.addEventListener('scroll', function () {
+            let scrollHandler = () => {
                 if ((window.pageYOffset || document.documentElement.scrollTop) > 300) {
                     elemClasses.add('visible');
                 } else {
                     elemClasses.remove('visible');
                 }
+            };
+
+            window.addEventListener('scroll', scrollHandler);
+
+            variables.get(this).$scope.$on("$destroy", () => {
+                window.removeEventListener('scroll', scrollHandler);
             });
         }
 

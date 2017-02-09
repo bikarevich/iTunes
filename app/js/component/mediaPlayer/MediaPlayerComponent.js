@@ -1,25 +1,23 @@
+'use strict';
+import {EventListenerComponent} from '../../utils/eventListeners/eventListenerComponent';
 (function (app) {
 
-    'use strict';
-
-    const SCOPE = new WeakMap();
-    const ELEMENT = new WeakMap();
     let variables = new WeakMap();
-    let that;
 
-    class MediaPlayerController {
+    class MediaPlayerController extends EventListenerComponent {
         constructor($scope, $element) {
-            that = this;
-            SCOPE.set(this, $scope);
-            ELEMENT.set(this, $element);
+            super();
             variables.set(this, {
-                $wrap: ELEMENT.get(this)[0],
-                $player: ELEMENT.get(this)[0].querySelector('.player'),
-                $volBtn: ELEMENT.get(this)[0].querySelector('.volume-control'),
-                $volPanel: ELEMENT.get(this)[0].querySelector('.volume-control-panel'),
-                $trackBtn: ELEMENT.get(this)[0].querySelector('.track-control'),
-                $trackPanel: ELEMENT.get(this)[0].querySelector('.track-control-panel'),
-                $trackPanelLine: ELEMENT.get(this)[0].querySelector('.track-control-line'),
+                $scope,
+                $wrap: $element[0],
+                $player: $element[0].querySelector('.player'),
+                $volBtn: $element[0].querySelector('.volume-control'),
+                $volPanel: $element[0].querySelector('.volume-control-panel'),
+                $trackBtn: $element[0].querySelector('.track-control'),
+                $trackPanel: $element[0].querySelector('.track-control-panel'),
+                $trackPanelLine: $element[0].querySelector('.track-control-line'),
+                trackCoords: {},
+                volumeCoords: {},
                 volumePosition: 0,
                 trackPosition: 0,
                 currentTime: {
@@ -32,63 +30,80 @@
                 }
             });
 
-            variables.get(this).$player.addEventListener("loadedmetadata", function () {
-                that.setVolume();
-                variables.get(that).trackPanelWidth = variables.get(that).$trackPanel.offsetWidth;
-                variables.get(that).trackPanelHeight = variables.get(that).$trackPanel.offsetHeight;
-                variables.get(that).volumePanelWidth = variables.get(that).$volPanel.offsetWidth;
-                variables.get(that).volumeCoords = that.getCoords(variables.get(that).$volPanel);
-                variables.get(that).trackCoords = that.getCoords(variables.get(that).$trackPanel);
-                variables.get(that).volumeCoords.right = variables.get(that).volumeCoords.left + variables.get(that).volumePanelWidth;
-                variables.get(that).trackCoords.right = variables.get(that).trackCoords.left + variables.get(that).trackPanelWidth;
-                variables.get(that).duration = Math.round(variables.get(that).$player.duration);
-                variables.get(that).totalTime.minutes = Math.floor(variables.get(that).duration / 60);
-                variables.get(that).seconds = variables.get(that).duration - variables.get(that).totalTime.minutes * 60;
-                variables.get(that).minutes = ('0' + variables.get(that).totalTime.minutes).slice(-2);
-                variables.get(that).seconds = ('0' + variables.get(that).totalTime.seconds).slice(-2);
-                variables.get(that).$volBtn.style.transform = 'translate(' + variables.get(that).$player.volume * variables.get(that).volumePanelWidth + 'px, 0px)';
-                that.addBufferedLine();
-                SCOPE.get(that).$apply();
-
-                if (that.playing) {
-                    variables.get(that).$player.play();
+            variables.get(this).$player.addEventListener("loadedmetadata", () => {
+                this.setVolume();
+                this.setTrackParams();
+                this.setVolumeParams();
+                this.setTotalTime();
+                this.setVolumeVal();
+                this.addBufferedLine();
+                $scope.$apply();
+                if (this.playing) {
+                    variables.get(this).$player.play();
                 }
             });
 
-            variables.get(this).$player.addEventListener("timeupdate", function () {
-                if (variables.get(that).$player.seekable.length > 0) {
-                    that.buffCanvasUpdate(variables.get(that).$player.seekable.end(0));
+            variables.get(this).$player.addEventListener("timeupdate", () => {
+                if (variables.get(this).$player.seekable.length > 0) {
+                    this.buffCanvasUpdate(variables.get(this).$player.seekable.end(0));
                 }
-                let curTime = variables.get(that).$player.currentTime, a;
-                let currentPerc = curTime / variables.get(that).duration;
-                a = Math.floor(currentPerc * variables.get(that).trackPanelWidth);
-                variables.get(that).$trackBtn.style.transform = "translate(" + a + "px , 0";
-                variables.get(that).$trackPanelLine.style.width = a + "px";
+                this.setTracksCurrentPosition();
             });
 
-            variables.get(this).$trackBtn.addEventListener('mousedown', function () {
-                document.addEventListener('mousemove', that.timeDrag);
+            variables.get(this).$volBtn.addEventListener('mousedown', () => {
+                document.addEventListener('mousemove', this.volumeDrag);
                 document.addEventListener('mouseup', function handler() {
-                    document.removeEventListener('mousemove', that.timeDrag);
+                    document.removeEventListener('mousemove', this.volumeDrag);
                     document.removeEventListener('mouseup', handler);
                 });
             });
 
-            variables.get(this).$volBtn.addEventListener('mousedown', function () {
-                document.addEventListener('mousemove', that.volumeDrag);
-                document.addEventListener('mouseup', function handler() {
-                    document.removeEventListener('mousemove', that.volumeDrag);
-                    document.removeEventListener('mouseup', handler);
-                });
-            });
+            this.addListener(variables.get(this).$trackPanel, 'click', this.timeDrag, this);
 
-            variables.get(this).$trackPanel.addEventListener('click', function (e) {
-                that.timeDrag(e);
-            });
+            this.addListener(variables.get(this).$trackBtn, 'mousedown', ()=> {
+                this.addListener(document, 'mousemove', this.timeDrag, this);
+                this.addListener(document, 'mouseup', ()=>{
+                    this.removeListener(document, 'mousemove');
+                    this.removeListener(document, 'mouseup');
+                }, this);
+            }, this);
 
-            variables.get(this).$volPanel.addEventListener('click', function (e) {
-                that.volumeDrag(e);
+            variables.get(this).$volPanel.addEventListener('click', (e) => {
+                this.volumeDrag(e);
             });
+        }
+
+        setTracksCurrentPosition() {
+            let curTime = variables.get(this).$player.currentTime, a;
+            let currentPerc = curTime / variables.get(this).duration;
+            a = Math.floor(currentPerc * variables.get(this).trackPanelWidth);
+            variables.get(this).$trackBtn.style.transform = "translate(" + a + "px , 0";
+            variables.get(this).$trackPanelLine.style.width = a + "px";
+        }
+
+        setTrackParams() {
+            variables.get(this).trackPanelWidth = variables.get(this).$trackPanel.offsetWidth;
+            variables.get(this).trackPanelHeight = variables.get(this).$trackPanel.offsetHeight;
+            variables.get(this).trackCoords = MediaPlayerController.getCoords(variables.get(this).$trackPanel);
+            variables.get(this).trackCoords.right = variables.get(this).trackCoords.left + variables.get(this).trackPanelWidth;
+        }
+
+        setVolumeParams() {
+            variables.get(this).volumePanelWidth = variables.get(this).$volPanel.offsetWidth;
+            variables.get(this).volumeCoords = MediaPlayerController.getCoords(variables.get(this).$volPanel);
+            variables.get(this).volumeCoords.right = variables.get(this).volumeCoords.left + variables.get(this).volumePanelWidth;
+        }
+
+        setTotalTime() {
+            variables.get(this).duration = Math.round(variables.get(this).$player.duration);
+            variables.get(this).totalTime.minutes = Math.floor(variables.get(this).duration / 60);
+            variables.get(this).seconds = variables.get(this).duration - variables.get(this).totalTime.minutes * 60;
+            variables.get(this).minutes = ('0' + variables.get(this).totalTime.minutes).slice(-2);
+            variables.get(this).seconds = ('0' + variables.get(this).totalTime.seconds).slice(-2);
+        }
+
+        setVolumeVal() {
+            variables.get(this).$volBtn.style.transform = 'translate(' + variables.get(this).$player.volume * variables.get(this).volumePanelWidth + 'px, 0px)';
         }
 
         addBufferedLine() {
@@ -109,53 +124,36 @@
         }
 
         timeDrag(e) {
-            if (e.pageX - variables.get(that).trackCoords.left < 0) {
-                variables.get(that).trackPosition = 0;
-            } else if (e.pageX > variables.get(that).trackCoords.right) {
-                variables.get(that).trackPosition = variables.get(that).trackPanelWidth;
+            if (e.pageX - variables.get(this).trackCoords.left < 0) {
+                variables.get(this).trackPosition = 0;
+            } else if (e.pageX > variables.get(this).trackCoords.right) {
+                variables.get(this).trackPosition = variables.get(this).trackPanelWidth;
             } else {
-                variables.get(that).trackPosition = e.pageX - variables.get(that).trackCoords.left;
+                variables.get(this).trackPosition = e.pageX - variables.get(this).trackCoords.left;
             }
-            variables.get(that).$player.currentTime = variables.get(that).duration * variables.get(that).trackPosition / variables.get(that).trackPanelWidth;
-            variables.get(that).$trackBtn.style.transform = 'translate(' + variables.get(that).trackPosition + 'px, 0px)';
-            variables.get(that).$trackPanelLine.style.width = variables.get(that).trackPosition + 'px';
+            variables.get(this).$player.currentTime = variables.get(this).duration * variables.get(this).trackPosition / variables.get(this).trackPanelWidth;
+            variables.get(this).$trackBtn.style.transform = 'translate(' + variables.get(this).trackPosition + 'px, 0px)';
+            variables.get(this).$trackPanelLine.style.width = variables.get(this).trackPosition + 'px';
         }
 
         volumeDrag(e) {
-            if (e.pageX < variables.get(that).volumeCoords.left) {
-                variables.get(that).volumePosition = 0;
-            } else if (e.pageX > variables.get(that).volumeCoords.right) {
-                variables.get(that).volumePosition = variables.get(that).volumePanelWidth;
+            if (e.pageX < variables.get(this).volumeCoords.left) {
+                variables.get(this).volumePosition = 0;
+            } else if (e.pageX > variables.get(this).volumeCoords.right) {
+                variables.get(this).volumePosition = variables.get(this).volumePanelWidth;
             } else {
-                variables.get(that).volumePosition = e.pageX - variables.get(that).volumeCoords.left;
+                variables.get(this).volumePosition = e.pageX - variables.get(this).volumeCoords.left;
             }
-            variables.get(that).$player.volume = variables.get(that).volumePosition / variables.get(that).volumePanelWidth;
-            localStorage.setItem('volume', variables.get(that).$player.volume);
-            variables.get(that).$volBtn.style.transform = 'translate(' + variables.get(that).volumePosition + 'px, 0px)';
+            variables.get(this).$player.volume = variables.get(this).volumePosition / variables.get(this).volumePanelWidth;
+            localStorage.setItem('volume', variables.get(this).$player.volume);
+            variables.get(this).$volBtn.style.transform = 'translate(' + variables.get(this).volumePosition + 'px, 0px)';
         }
 
         setVolume() {
             let savedVol = localStorage.getItem('volume');
             if (!savedVol) savedVol = 1;
-            variables.get(that).$player.volume = savedVol;
-            variables.get(that).$volBtn.style.transform = 'translate(' + savedVol + 'px, 0px)';
-        }
-
-        getCoords(elem) {
-            let box = elem.getBoundingClientRect();
-            let body = document.body;
-            let docEl = document.documentElement;
-
-            let scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-            let scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-
-            let clientTop = docEl.clientTop || body.clientTop || 0;
-            let clientLeft = docEl.clientLeft || body.clientLeft || 0;
-
-            let top = box.top + scrollTop - clientTop;
-            let left = box.left + scrollLeft - clientLeft;
-
-            return {top: Math.round(top), left: Math.round(left)};
+            variables.get(this).$player.volume = savedVol;
+            variables.get(this).$volBtn.style.transform = 'translate(' + savedVol + 'px, 0px)';
         }
 
         play() {
@@ -168,6 +166,23 @@
             this.callback();
         }
     }
+
+    MediaPlayerController.getCoords = (elem) => {
+        let box = elem.getBoundingClientRect();
+        let body = document.body;
+        let docEl = document.documentElement;
+
+        let scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+        let scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+
+        let clientTop = docEl.clientTop || body.clientTop || 0;
+        let clientLeft = docEl.clientLeft || body.clientLeft || 0;
+
+        let top = box.top + scrollTop - clientTop;
+        let left = box.left + scrollLeft - clientLeft;
+
+        return {top: Math.round(top), left: Math.round(left)};
+    };
 
     app.component('mediaPlayer', {
         bindings: {

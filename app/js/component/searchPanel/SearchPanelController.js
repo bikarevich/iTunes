@@ -18,7 +18,6 @@ class SearchPanelController{
 
     submitSearch() {
         variables.get(this).searchPanelService.getSearchResults(this.searchData).then((response) => {
-            variables.get(this).checkLoaderService.enableLoader();
             variables.get(this).searchResultsPageService.setResults(response.data);
             if(variables.get(this).$state.current.name != 'search') {
                 variables.get(this).$state.go('search');

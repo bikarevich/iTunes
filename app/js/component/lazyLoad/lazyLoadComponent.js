@@ -20,33 +20,43 @@
                     checkLoaderService
                 });
 
+                let scrollHandler = () => {
+                    this.onScroll();
+                };
+
                 this.visibleItems = [];
                 this.results = [];
 
-                variables.get(this).$rootScope.$on("CallUpdateSearchResults", () => {
-                    variables.get(this).$scope.updateSearchResults();
+                $rootScope.$on("CallUpdateSearchResults", () => {
+                    this.updateSearchResults();
                 });
 
-                variables.get(this).$scope.updateSearchResults = () => {
-                    this.results = variables.get(this).searchResultsPageService.getResults();
-                    this.resetCount();
-                    if (this.results.results && this.results.results.length > 0) {
-                        variables.get(this).totalItems = this.results.resultCount;
-                        this.addStepItem();
-                        this.updateCount();
-                    }
-                    variables.get(this).checkLoaderService.disableLoader();
-                };
-
-                variables.get(this).$scope.updateSearchResults();
-
-                window.addEventListener('scroll', () => {
-                    this.onScroll();
+                window.addEventListener('scroll', scrollHandler);
+                $scope.$on("$destroy", () => {
+                    window.removeEventListener('scroll', scrollHandler);
                 });
+
+                this.init();
             }
 
+            init() {
+                this.updateSearchResults();
+            }
+
+            updateSearchResults() {
+                variables.get(this).checkLoaderService.enableLoader();
+                this.resetCount();
+                this.results = variables.get(this).searchResultsPageService.getResults();
+                if (this.results.results && this.results.results.length > 0) {
+                    variables.get(this).totalItems = this.results.resultCount;
+                    this.addStepItem();
+                    this.updateCount();
+                }
+                variables.get(this).checkLoaderService.disableLoader();
+            };
+
             onScroll() {
-                (this.debounce(() => {
+                (LazyLoadController.debounce(() => {
                     this.updateBodyHeight();
                     this.checkScrollPos();
                 }, 200))();
@@ -90,16 +100,7 @@
             }
 
             sortType() {
-                this.visibleItems.sort(this.sortByType);
-            }
-
-            sortByType(a, b) {
-                if (a.wrapperType > b.wrapperType) return 1;
-                if (a.wrapperType < b.wrapperType) return -1;
-                if (a.wrapperType == b.wrapperType) {
-                    if (a.trackName > b.trackName) return 1;
-                    if (a.trackName < b.trackName) return -1;
-                }
+                this.visibleItems.sort(LazyLoadController.sortByType);
             }
 
             updateBodyHeight() {
@@ -107,29 +108,6 @@
                     variables.get(this).bodyHeight = document.querySelector('body').offsetHeight;
                     variables.get(this).heightUpdated = true;
                 }
-            }
-
-            debounce(func, ms) {
-                let isThrottled = false,
-                    savedArgs,
-                    savedThis;
-                function wrapper() {
-                    if (isThrottled) {
-                        savedArgs = arguments;
-                        savedThis = this;
-                        return;
-                    }
-                    func.apply(this, arguments);
-                    isThrottled = true;
-                    setTimeout(function () {
-                        isThrottled = false;
-                        if (savedArgs) {
-                            wrapper.apply(savedThis, savedArgs);
-                            savedArgs = savedThis = null;
-                        }
-                    }, ms);
-                }
-                return wrapper;
             }
 
             getScrollPerc(scroll) {
@@ -167,6 +145,8 @@
                 variables.get(this).countVisible = 0;
                 variables.get(this).itemsStep = 10;
                 variables.get(this).totalItems = 0;
+                this.visibleItems = [];
+                this.results = [];
             }
 
             updateScope() {
@@ -174,10 +154,39 @@
             }
         }
 
+        LazyLoadController.sortByType = (a, b) => {
+            if (a.wrapperType > b.wrapperType) return 1;
+            if (a.wrapperType < b.wrapperType) return -1;
+            if (a.wrapperType == b.wrapperType) {
+                if (a.trackName > b.trackName) return 1;
+                if (a.trackName < b.trackName) return -1;
+            }
+        };
+
+        LazyLoadController.debounce = (func, ms) => {
+            let isThrottled = false,
+                savedArgs,
+                savedThis;
+            function wrapper() {
+                if (isThrottled) {
+                    savedArgs = arguments;
+                    savedThis = this;
+                    return;
+                }
+                func.apply(this, arguments);
+                isThrottled = true;
+                setTimeout(function () {
+                    isThrottled = false;
+                    if (savedArgs) {
+                        wrapper.apply(savedThis, savedArgs);
+                        savedArgs = savedThis = null;
+                    }
+                }, ms);
+            }
+            return wrapper;
+        };
+
         app.component('lazyLoad', {
-            bindings: {
-                readyData: '@'
-            },
             templateUrl: 'js/component/lazyLoad/lazyLoad.html',
             controller: LazyLoadController,
             controllerAs: 'ctrl'
