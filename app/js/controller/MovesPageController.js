@@ -1,15 +1,15 @@
-const STATE = new WeakMap();
-const SCE = new WeakMap();
-const CHECK_LOADER_SERVICE = new WeakMap();
-const MOVE_PAGE_SERVICE = new WeakMap();
+'use strict';
+
+let variables = new WeakMap();
 
 class MovesPageController {
     constructor(movesPageService, $state, $sce, checkLoaderService) {
-        CHECK_LOADER_SERVICE.set(this, checkLoaderService);
-        MOVE_PAGE_SERVICE.set(this, movesPageService);
-        STATE.set(this, $state);
-        SCE.set(this, $sce);
-
+        variables.set(this, {
+            movesPageService,
+            $state,
+            $sce,
+            checkLoaderService
+        });
         this.init();
     }
 
@@ -19,26 +19,26 @@ class MovesPageController {
     }
 
     setTopMoves() {
-        MOVE_PAGE_SERVICE.get(this).getTopMoves().then((response) => {
+        variables.get(this).movesPageService.getTopMoves().then((response) => {
             this.topMoves = response.data.feed.entry;
             this.topMoves.forEach((item) => {
-                item.summary.label = SCE.get(this).trustAsHtml(item.summary.label);
+                item.summary.label = variables.get(this).$sce.trustAsHtml(item.summary.label);
             });
         });
     }
 
     setTopVideoRentals() {
-        MOVE_PAGE_SERVICE.get(this).getTopVideoRentals().then((response) => {
+        variables.get(this).movesPageService.getTopVideoRentals().then((response) => {
             this.topVideoRentals = response.data.feed.entry;
             this.topVideoRentals.forEach((item) => {
-                item.summary.label = SCE.get(this).trustAsHtml(item.summary.label);
+                item.summary.label = variables.get(this).$sce.trustAsHtml(item.summary.label);
             });
-            CHECK_LOADER_SERVICE.get(this).disableLoader();
+            variables.get(this).checkLoaderService.disableLoader();
         });
     }
 
     goToMoveView(id) {
-        STATE.get(this).go('move', {id: id});
+        variables.get(this).$state.go('move', {id: id});
     }
 }
 

@@ -1,23 +1,27 @@
-const API_SERVICE = new WeakMap();
-const TOP_SONGS_URL = 'https://itunes.apple.com/us/rss/topsongs/limit=10/json';
-const TOP_BOOKS_URL = 'https://itunes.apple.com/us/rss/topfreeebooks/limit=10/json';
-const TOP_MOVIES_URL = 'https://itunes.apple.com/us/rss/topmovies/limit=10/json';
+'use strict';
+
+let variables = new WeakMap();
 
 class mainPageService {
     constructor(API) {
-        API_SERVICE.set(this, API);
+        variables.set(this, {
+            API,
+            books_url : 'https://itunes.apple.com/us/rss/topfreeebooks/limit=10/json',
+            songs_url : 'https://itunes.apple.com/us/rss/topsongs/limit=10/json',
+            movies_url : 'https://itunes.apple.com/us/rss/topmovies/limit=10/json'
+        });
     }
 
     getTopSongs() {
-        return API_SERVICE.get(this).$get(TOP_SONGS_URL).then(response => response);
+        return variables.get(this).API.$get(variables.get(this).songs_url).then(response => response);
     };
 
     getTopMoves() {
-        return API_SERVICE.get(this).$get(TOP_MOVIES_URL).then(response => response);
+        return variables.get(this).API.$get(variables.get(this).movies_url).then(response => response);
     };
 
     getTopBooks() {
-        return API_SERVICE.get(this).$get(TOP_BOOKS_URL).then(response => response);
+        return variables.get(this).API.$get(variables.get(this).books_url).then(response => response);
     };
 }
 

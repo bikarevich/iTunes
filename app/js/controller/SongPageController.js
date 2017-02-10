@@ -2,14 +2,22 @@
 
 import {ItemViewController} from './ItemViewController';
 
+let variables = new WeakMap();
+
 class SongPageController extends ItemViewController {
     constructor(songPageService, $state, $sce, $scope, searchResultsPageService, searchPanelService, pageBgService, checkLoaderService, $rootScope) {
         super(pageBgService, checkLoaderService, $scope, $state);
-        this.songPageService = songPageService;
-        this.searchResultsPageService = searchResultsPageService;
-        this.searchPanelService = searchPanelService;
-        this.$rootScope = $rootScope;
-        this.$sce = $sce;
+        variables.set(this, {
+            songPageService,
+            $state,
+            $sce,
+            $scope,
+            searchResultsPageService,
+            searchPanelService,
+            pageBgService,
+            checkLoaderService,
+            $rootScope
+        });
         this.init();
     }
 
@@ -18,11 +26,11 @@ class SongPageController extends ItemViewController {
     }
 
     goToAlbum(id) {
-        this.$state.go('album', {id: id});
+        variables.get(this).$state.go('album', {id: id});
     }
 
     setSongData() {
-        this.songPageService.getSongData(this.id).then((response) => {
+        variables.get(this).songPageService.getSongData(this.id).then((response) => {
             this.songData = response.data.results[0];
             this.tracksList = response.data.results;
             this.setNewDate();
@@ -33,9 +41,9 @@ class SongPageController extends ItemViewController {
     }
 
     setNewDate() {
+        let dateOptions = {year: 'numeric', month: 'long', day: 'numeric' };
         let date = new Date(this.songData.releaseDate);
-        let newDate = ('0' + date.getDate()).slice(-2) + ' ' + this.MONTH[date.getMonth()] + ', ' + date.getFullYear();
-        this.songData.releaseDate = newDate;
+        this.songData.releaseDate = new Intl.DateTimeFormat('en-US', dateOptions).format(date);
     }
 
     setPreviewImages() {
@@ -49,12 +57,17 @@ class SongPageController extends ItemViewController {
     }
 
     findAuthor(name) {
-        this.searchPanelService.getSearchResults({term: name, limit: 200, media: 'music'}).then((response) => {
-            this.searchResultsPageService.setResults(response.data);
-            if (this.$state.current.name != 'search') {
-                this.$state.go('search');
+        let $state = variables.get(this).$state;
+        variables.get(this).searchPanelService.getSearchResults({
+            term: name,
+            limit: 200,
+            media: 'music'
+        }).then((response) => {
+            variables.get(this).searchResultsPageService.setResults(response.data);
+            if ($state.current.name != 'search') {
+                $state.go('search');
             } else {
-                this.$rootScope.$emit("CallUpdateSearchResults", {});
+                variables.get(this).$rootScope.$emit("CallUpdateSearchResults", {});
             }
         });
     }

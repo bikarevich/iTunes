@@ -19,23 +19,18 @@
                     searchResultsPageService,
                     checkLoaderService
                 });
-
                 let scrollHandler = () => {
                     this.onScroll();
                 };
-
                 this.visibleItems = [];
                 this.results = [];
-
                 $rootScope.$on("CallUpdateSearchResults", () => {
                     this.updateSearchResults();
                 });
-
                 window.addEventListener('scroll', scrollHandler);
                 $scope.$on("$destroy", () => {
                     window.removeEventListener('scroll', scrollHandler);
                 });
-
                 this.init();
             }
 
@@ -56,7 +51,7 @@
             };
 
             onScroll() {
-                (LazyLoadController.debounce(() => {
+                (this.debounce(() => {
                     this.updateBodyHeight();
                     this.checkScrollPos();
                 }, 200))();
@@ -100,7 +95,7 @@
             }
 
             sortType() {
-                this.visibleItems.sort(LazyLoadController.sortByType);
+                this.visibleItems.sort(this.sortByType);
             }
 
             updateBodyHeight() {
@@ -128,7 +123,7 @@
                 }
             }
 
-            addStepItem () {
+            addStepItem() {
                 this.visibleItems = this.visibleItems.concat(this.results.results.slice(variables.get(this).countVisible, variables.get(this).countVisible + variables.get(this).itemsStep));
             }
 
@@ -152,39 +147,41 @@
             updateScope() {
                 variables.get(this).$scope.$apply();
             }
-        }
 
-        LazyLoadController.sortByType = (a, b) => {
-            if (a.wrapperType > b.wrapperType) return 1;
-            if (a.wrapperType < b.wrapperType) return -1;
-            if (a.wrapperType == b.wrapperType) {
-                if (a.trackName > b.trackName) return 1;
-                if (a.trackName < b.trackName) return -1;
-            }
-        };
-
-        LazyLoadController.debounce = (func, ms) => {
-            let isThrottled = false,
-                savedArgs,
-                savedThis;
-            function wrapper() {
-                if (isThrottled) {
-                    savedArgs = arguments;
-                    savedThis = this;
-                    return;
+            sortByType(a, b) {
+                if (a.wrapperType > b.wrapperType) return 1;
+                if (a.wrapperType < b.wrapperType) return -1;
+                if (a.wrapperType == b.wrapperType) {
+                    if (a.trackName > b.trackName) return 1;
+                    if (a.trackName < b.trackName) return -1;
                 }
-                func.apply(this, arguments);
-                isThrottled = true;
-                setTimeout(function () {
-                    isThrottled = false;
-                    if (savedArgs) {
-                        wrapper.apply(savedThis, savedArgs);
-                        savedArgs = savedThis = null;
+            };
+
+            debounce(func, ms) {
+                let isThrottled = false,
+                    savedArgs,
+                    savedThis;
+
+                function wrapper() {
+                    if (isThrottled) {
+                        savedArgs = arguments;
+                        savedThis = this;
+                        return;
                     }
-                }, ms);
-            }
-            return wrapper;
-        };
+                    func.apply(this, arguments);
+                    isThrottled = true;
+                    setTimeout(function () {
+                        isThrottled = false;
+                        if (savedArgs) {
+                            wrapper.apply(savedThis, savedArgs);
+                            savedArgs = savedThis = null;
+                        }
+                    }, ms);
+                }
+
+                return wrapper;
+            };
+        }
 
         app.component('lazyLoad', {
             templateUrl: 'js/component/lazyLoad/lazyLoad.html',

@@ -1,5 +1,7 @@
 'use strict';
+
 import {EventListenerComponent} from '../../utils/eventListeners/eventListenerComponent';
+
 (function (app) {
 
     let variables = new WeakMap();
@@ -30,7 +32,7 @@ import {EventListenerComponent} from '../../utils/eventListeners/eventListenerCo
                 }
             });
 
-            variables.get(this).$player.addEventListener("loadedmetadata", () => {
+            this.addListener(variables.get(this).$player, 'loadedmetadata', function () {
                 this.setVolume();
                 this.setTrackParams();
                 this.setVolumeParams();
@@ -41,36 +43,34 @@ import {EventListenerComponent} from '../../utils/eventListeners/eventListenerCo
                 if (this.playing) {
                     variables.get(this).$player.play();
                 }
-            });
+            }, this);
 
-            variables.get(this).$player.addEventListener("timeupdate", () => {
+            this.addListener(variables.get(this).$player, 'timeupdate', function () {
                 if (variables.get(this).$player.seekable.length > 0) {
                     this.buffCanvasUpdate(variables.get(this).$player.seekable.end(0));
                 }
                 this.setTracksCurrentPosition();
-            });
-
-            variables.get(this).$volBtn.addEventListener('mousedown', () => {
-                document.addEventListener('mousemove', this.volumeDrag);
-                document.addEventListener('mouseup', function handler() {
-                    document.removeEventListener('mousemove', this.volumeDrag);
-                    document.removeEventListener('mouseup', handler);
-                });
-            });
+            }, this);
 
             this.addListener(variables.get(this).$trackPanel, 'click', this.timeDrag, this);
 
-            this.addListener(variables.get(this).$trackBtn, 'mousedown', ()=> {
+            this.addListener(variables.get(this).$trackBtn, 'mousedown', function () {
                 this.addListener(document, 'mousemove', this.timeDrag, this);
-                this.addListener(document, 'mouseup', ()=>{
+                this.addListener(document, 'mouseup', function () {
                     this.removeListener(document, 'mousemove');
                     this.removeListener(document, 'mouseup');
                 }, this);
             }, this);
 
-            variables.get(this).$volPanel.addEventListener('click', (e) => {
-                this.volumeDrag(e);
-            });
+            this.addListener(variables.get(this).$volPanel, 'click', this.volumeDrag, this);
+
+            this.addListener(variables.get(this).$volBtn, 'mousedown', function () {
+                this.addListener(document, 'mousemove', this.volumeDrag, this);
+                this.addListener(document, 'mouseup', function () {
+                    this.removeListener(document, 'mousemove');
+                    this.removeListener(document, 'mouseup');
+                }, this);
+            }, this);
         }
 
         setTracksCurrentPosition() {
@@ -84,13 +84,13 @@ import {EventListenerComponent} from '../../utils/eventListeners/eventListenerCo
         setTrackParams() {
             variables.get(this).trackPanelWidth = variables.get(this).$trackPanel.offsetWidth;
             variables.get(this).trackPanelHeight = variables.get(this).$trackPanel.offsetHeight;
-            variables.get(this).trackCoords = MediaPlayerController.getCoords(variables.get(this).$trackPanel);
+            variables.get(this).trackCoords = this.getCoords(variables.get(this).$trackPanel);
             variables.get(this).trackCoords.right = variables.get(this).trackCoords.left + variables.get(this).trackPanelWidth;
         }
 
         setVolumeParams() {
             variables.get(this).volumePanelWidth = variables.get(this).$volPanel.offsetWidth;
-            variables.get(this).volumeCoords = MediaPlayerController.getCoords(variables.get(this).$volPanel);
+            variables.get(this).volumeCoords = this.getCoords(variables.get(this).$volPanel);
             variables.get(this).volumeCoords.right = variables.get(this).volumeCoords.left + variables.get(this).volumePanelWidth;
         }
 
@@ -165,24 +165,24 @@ import {EventListenerComponent} from '../../utils/eventListeners/eventListenerCo
             this.playing = false;
             this.callback();
         }
+
+        getCoords (elem) {
+            let box = elem.getBoundingClientRect();
+            let body = document.body;
+            let docEl = document.documentElement;
+
+            let scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+            let scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+
+            let clientTop = docEl.clientTop || body.clientTop || 0;
+            let clientLeft = docEl.clientLeft || body.clientLeft || 0;
+
+            let top = box.top + scrollTop - clientTop;
+            let left = box.left + scrollLeft - clientLeft;
+
+            return {top: Math.round(top), left: Math.round(left)};
+        };
     }
-
-    MediaPlayerController.getCoords = (elem) => {
-        let box = elem.getBoundingClientRect();
-        let body = document.body;
-        let docEl = document.documentElement;
-
-        let scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
-        let scrollLeft = window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
-
-        let clientTop = docEl.clientTop || body.clientTop || 0;
-        let clientLeft = docEl.clientLeft || body.clientLeft || 0;
-
-        let top = box.top + scrollTop - clientTop;
-        let left = box.left + scrollLeft - clientLeft;
-
-        return {top: Math.round(top), left: Math.round(left)};
-    };
 
     app.component('mediaPlayer', {
         bindings: {

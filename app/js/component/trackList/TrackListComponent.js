@@ -1,6 +1,6 @@
 (function (app) {
-
     'use strict';
+
     const SCE = new WeakMap();
 
     class TrackListController {

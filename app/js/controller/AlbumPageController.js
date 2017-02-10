@@ -2,14 +2,20 @@
 
 import {ItemViewController} from './ItemViewController';
 
+let variables = new WeakMap();
+
 class AlbumPageController extends ItemViewController {
     constructor(albumPageService, $state, $sce, $scope, searchResultsPageService, searchPanelService, pageBgService, checkLoaderService, $rootScope) {
         super(pageBgService, checkLoaderService, $scope, $state);
-        this.albumPageService = albumPageService;
-        this.searchPanelService = searchPanelService;
-        this.searchResultsPageService = searchResultsPageService;
-        this.$sce = $sce;
-        this.$rootScope = $rootScope;
+        variables.set(this, {
+            albumPageService,
+            $state,
+            $sce,
+            searchResultsPageService,
+            searchPanelService,
+            checkLoaderService,
+            $rootScope
+        });
         this.init();
     }
 
@@ -18,7 +24,7 @@ class AlbumPageController extends ItemViewController {
     }
 
     setAlbumData() {
-        this.albumPageService.getAlbumData(this.id).then((response) => {
+        variables.get(this).albumPageService.getAlbumData(this.id).then((response) => {
             this.AlbumTracks = response.data.results;
             if (this.AlbumTracks && this.AlbumTracks.length > 0) {
                 this.albumData = response.data.results[0];
@@ -29,7 +35,7 @@ class AlbumPageController extends ItemViewController {
                 this.checkPrice();
                 this.setPageBg(this.albumData.largePreviewImgUrl);
             } else {
-                this.$state.go('index');
+                variables.get(this).$state.go('index');
             }
         });
     }
@@ -45,16 +51,16 @@ class AlbumPageController extends ItemViewController {
     setNewDate() {
         let date = new Date(this.albumData.releaseDate);
         let nowDate = new Date();
+        let dateOptions = {year: 'numeric', month: 'long', day: 'numeric' };
         if (date > nowDate) {
             this.albumData.preorder = true;
         }
-        let newDate = ('0' + date.getDate()).slice(-2) + ' ' + this.MONTH[date.getMonth()] + ', ' + date.getFullYear();
-        this.albumData.releaseDate = newDate;
+        this.albumData.releaseDate = new Intl.DateTimeFormat('en-US', dateOptions).format(date);
     }
 
     setPreviewImages() {
         this.albumData.largePreviewImgUrl = this.getLargePreviewImage(this.albumData.artworkUrl100);
-        this.albumData.previewUrl = this.$sce.trustAsResourceUrl(this.albumData.largePreviewImgUrl);
+        this.albumData.previewUrl = variables.get(this).$sce.trustAsResourceUrl(this.albumData.largePreviewImgUrl);
     }
 
     checkPrice() {
@@ -64,13 +70,14 @@ class AlbumPageController extends ItemViewController {
     }
 
     findAuthor(name) {
-        this.checkLoaderService.enableLoader();
-        this.searchPanelService.getSearchResults({term: name, limit: 200, media: 'music'}).then((response) => {
-            this.searchResultsPageService.setResults(response.data);
-            if (this.$state.current.name != 'search') {
-                this.$state.go('search');
+        let $state = variables.get(this).$state;
+        variables.get(this).checkLoaderService.enableLoader();
+        variables.get(this).searchPanelService.getSearchResults({term: name, limit: 200, media: 'music'}).then((response) => {
+            variables.get(this).searchResultsPageService.setResults(response.data);
+            if ($state.current.name != 'search') {
+                $state.go('search');
             } else {
-                this.$rootScope.$emit("CallUpdateSearchResults", {});
+                variables.get(this).$rootScope.$emit("CallUpdateSearchResults", {});
             }
         });
     }

@@ -4,34 +4,28 @@ let eventListeners = new WeakMap();
 
 class EventListenerComponent {
     constructor() {
-        eventListeners.set(this, {});
     }
 
     addListener(elem, event, func, ctx) {
-        let eventsList = eventListeners.get(this);
-        if(!(elem in eventsList)) {
-            eventsList[elem] = {};
+        if (!eventListeners.get(elem)) {
+            eventListeners.set(elem, {});
         }
-        if (!(event in eventsList[elem])) {
-            eventsList[elem][event] = [];
+
+        if (!(event in eventListeners.get(elem))) {
+            eventListeners.get(elem)[event] = [];
         }
-        eventsList[elem][event].push([func, ctx]);
-        elem.addEventListener(event, func.bind(ctx), false);
+
+        eventListeners.get(elem)[event].push({
+            func: func,
+            ctx: ctx,
+            binded: func.bind(ctx)
+        });
+        elem.addEventListener(event, eventListeners.get(elem)[event][0].binded, false);
     }
 
     removeListener(elem, event) {
-        let eventsList = eventListeners.get(this);
-        if (elem in eventsList) {
-            let handlers = eventsList[elem];
-            if (event in handlers) {
-                let eventHandlers = handlers[event];
-                for (let i = eventHandlers.length; i--;) {
-                    let handler = eventHandlers[i];
-                    console.log(handler[0]);
-                    elem.removeEventListener(event, handler[0]);
-                }
-            }
-        }
+        elem.removeEventListener(event, eventListeners.get(elem)[event][0].binded);
+        eventListeners.get(elem)[event] = [];
     }
 }
 

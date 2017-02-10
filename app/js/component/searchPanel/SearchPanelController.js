@@ -1,3 +1,5 @@
+'use strict';
+
 let variables = new WeakMap();
 
 class SearchPanelController{

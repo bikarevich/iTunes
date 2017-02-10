@@ -1,11 +1,14 @@
 'use strict';
 
-class pageBgService {
+import {EventListenerComponent} from '../utils/eventListeners/eventListenerComponent';
+
+class pageBgService extends EventListenerComponent{
     constructor() {
+        super();
     }
 
     getBase64Img(url) {
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             let width = window.innerWidth,
                 height = window.innerHeight,
                 pageBg = document.createElement('canvas'),
@@ -14,17 +17,9 @@ class pageBgService {
                 ctx = pageBg.getContext('2d'),
                 k = width / height,
                 defImgSize = 1000,
-                blockSize = 4,
-                defaultRGB = {r: 0, g: 0, b: 0},
                 data,
-                i = -3,
-                length,
-                rgb = {r: 0, g: 0, b: 0},
-                luma,
-                count = 0,
                 imgWidth,
-                imgHeight,
-                lumaClass;
+                imgHeight;
 
             img.crossOrigin = "Anonymous";
 
@@ -40,32 +35,18 @@ class pageBgService {
                 imgWidth = defImgSize / k;
             }
 
-            img.addEventListener('load', function handler() {
+            this.addListener(img, 'load', ()=> {
+                let lumaClass;
                 ctx.drawImage(img, -(imgWidth * 1.3 - width) / 2, -(imgHeight * 1.3 - height) / 2, imgWidth * 1.3, imgHeight * 1.3);
                 ctx.filter = 'blur(35px)';
                 ctx.drawImage(img, -(imgWidth * 1.3 - width) / 2, -(imgHeight * 1.3 - height) / 2, imgWidth * 1.3, imgHeight * 1.3);
                 ctx.globalAlpha = 0.4;
                 ctx.fillRect(0, 0, width, height);
                 data = ctx.getImageData(0, 0, imgWidth, imgHeight);
-                length = data.data.length;
-                while ((i += blockSize * 4) < length) {
-                    ++count;
-                    rgb.r += data.data[i];
-                    rgb.g += data.data[i + 1];
-                    rgb.b += data.data[i + 2];
-                }
-                rgb.r = Math.floor(rgb.r / count);
-                rgb.g = Math.floor(rgb.g / count);
-                rgb.b = Math.floor(rgb.b / count);
 
-                luma = 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
-                if (luma < 85) {
-                    lumaClass = true;
-                } else {
-                    lumaClass = false;
-                }
+                lumaClass = pageBgService.getLuma(data);
 
-                var reader = new window.FileReader();
+                let reader = new window.FileReader();
 
                 pageBg.toBlob(function (blob) {
                     reader.readAsDataURL(blob);
@@ -77,8 +58,8 @@ class pageBgService {
                     });
                 });
 
-                img.removeEventListener('load', handler);
-            });
+                this.removeListener(img, 'load');
+            }, this);
 
             img.addEventListener('error', function handler() {
                 console.log('image didn\'t load');
@@ -90,5 +71,29 @@ class pageBgService {
         });
     };
 }
+
+pageBgService.getLuma = function(data) {
+    let length,
+        rgb = {r: 0, g: 0, b: 0},
+        luma,
+        count = 0,
+        i = -3,
+        blockSize = 4,
+        lumaClass;
+
+    length = data.data.length;
+    while ((i += blockSize * 4) < length) {
+        ++count;
+        rgb.r += data.data[i];
+        rgb.g += data.data[i + 1];
+        rgb.b += data.data[i + 2];
+    }
+    rgb.r = Math.floor(rgb.r / count);
+    rgb.g = Math.floor(rgb.g / count);
+    rgb.b = Math.floor(rgb.b / count);
+    luma = 0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b;
+    lumaClass = luma < 85;
+    return lumaClass;
+};
 
 export  {pageBgService};

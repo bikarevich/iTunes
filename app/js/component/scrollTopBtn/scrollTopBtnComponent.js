@@ -9,9 +9,7 @@
                 $scope,
                 $element : $element
             });
-
             let elemClasses = $element[0].firstElementChild.classList;
-
             let scrollHandler = () => {
                 if ((window.pageYOffset || document.documentElement.scrollTop) > 300) {
                     elemClasses.add('visible');
@@ -19,9 +17,7 @@
                     elemClasses.remove('visible');
                 }
             };
-
             window.addEventListener('scroll', scrollHandler);
-
             variables.get(this).$scope.$on("$destroy", () => {
                 window.removeEventListener('scroll', scrollHandler);
             });

@@ -1,13 +1,14 @@
-const STATE = new WeakMap();
-const CHECK_LOADER_SERVICE = new WeakMap();
-const MUSIC_PAGE_SERVICE = new WeakMap();
+'use strict';
+
+let variables = new WeakMap();
 
 class MusicPageController {
     constructor(musicPageService, $state, checkLoaderService) {
-        CHECK_LOADER_SERVICE.set(this, checkLoaderService);
-        MUSIC_PAGE_SERVICE.set(this, musicPageService);
-        STATE.set(this, $state);
-
+        variables.set(this, {
+            musicPageService,
+            $state,
+            checkLoaderService
+        });
         this.init();
     }
 
@@ -17,28 +18,28 @@ class MusicPageController {
     }
 
     setTopAlbums() {
-        MUSIC_PAGE_SERVICE.get(this).getTopAlbums().then((response) => {
+        variables.get(this).musicPageService.getTopAlbums().then((response) => {
             this.topAlbums = response.data.feed.entry;
         });
     }
 
     setTopSongs() {
-        MUSIC_PAGE_SERVICE.get(this).getTopSongs().then((response) => {
+        variables.get(this).musicPageService.getTopSongs().then((response) => {
             this.topSongs = response.data.feed.entry;
             this.topSongs.forEach((item) => {
                 let href = item['im:collection'].link.attributes.href;
                 item.collectionId = href.substring(href.lastIndexOf("/")+3,href.lastIndexOf("?"));
             });
-            CHECK_LOADER_SERVICE.get(this).disableLoader();
+            variables.get(this).checkLoaderService.disableLoader();
         });
     }
 
     goToAlbumView(id) {
-        STATE.get(this).go('album', {id: id});
+        variables.get(this).$state.go('album', {id: id});
     }
 
     goToSongView(id) {
-        STATE.get(this).go('song', {id: id});
+        variables.get(this).$state.go('song', {id: id});
     }
 }
 
